@@ -10,11 +10,15 @@
 
 import { validateSync } from 'class-validator';
 import type { AstNode } from 'langium';
-import { isClass, isDataType } from '../langium/language/ast.js';
-import { ClassValidationElement, DataTypeValidationElement } from './validation-elements.js';
+import { isLifeline, isClass, isDataType } from '../langium/language/ast.js';
+import { LifelineValidationElement, ClassValidationElement, DataTypeValidationElement } from './validation-elements.js';
 
 export function validateNode(node: AstNode): void {
     let errors: any[] = [];
+
+    if (isLifeline(node)) {
+        errors = validateSync(new LifelineValidationElement(node));
+    }
 
     if (isClass(node)) {
         errors = validateSync(new ClassValidationElement(node));

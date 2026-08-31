@@ -40,7 +40,9 @@ import { umlLoadingModule } from './features/loading/uml-loading.module.js';
 import { umlRoutingModule } from './features/routing/uml-routing.module.js';
 import { umlThemeModule } from './features/theme/uml-theme.module.js';
 import { umlToolPaletteModule } from './features/tool-palette/uml-tool-palette.module.js';
+import { umlEdgeCreationToolModule } from './features/tools/edge-creation/uml-edge-creation.module.js';
 import { umlToolManagerModule } from './features/tools/tool-manager/uml-tool-manager.module.js';
+import { umlZOrderModule } from './features/zorder/uml-zorder.module.js';
 import { umlDiagramModules } from './uml/index.js';
 import { umlBaseViewsModule } from './views/uml-base-views.module.js';
 // GLSP Uses cjs version of inversify, so we need to use require to import it
@@ -97,8 +99,10 @@ export function initializeUmlDiagramContainer(
         umlLoadingModule,
         umlRoutingModule,
         umlThemeModule,
+        umlEdgeCreationToolModule,
         umlToolManagerModule,
         umlTypeHintsModule,
+        umlZOrderModule,
         { add: umlToolPaletteModule, remove: toolPaletteModule },
         ...umlDiagramModules,
         ...containerConfiguration

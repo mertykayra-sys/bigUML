@@ -37,6 +37,14 @@ export namespace CommonModelTypes {
      */
     export const COMP_STATE_REGION = 'uml-comp:state-region';
     export const COMP_STATE_PARTS = 'uml-comp:state-parts';
+    /**
+     * The band one operand of a combined fragment is drawn as.
+     *
+     * Its own type for the reason the two above have one - a compartment is only reachable by type, and a
+     * band the user can click into to write a guard has to be told apart from the compartments every other
+     * shape in every diagram is built from.
+     */
+    export const COMP_INTERACTION_OPERAND = 'uml-comp:interaction-operand';
 }
 
 /**
@@ -46,6 +54,18 @@ export namespace CommonModelTypes {
  * every render, so the view draws the name itself and reads it from here.
  */
 export const OUTSIDE_LABEL_ARG = 'outsideLabel';
+
+/**
+ * How far the bottom right corner of a frame's name tag is cut back - the fold that makes the shape read
+ * as a tag rather than as a box in the corner.
+ *
+ * Shared for the reason the package tab and the note fold below are: the view draws the cut (see
+ * `FrameNodeView.renderNameTag`) and the element has to leave room for it, since a tag whose text runs
+ * into the fold is a tag with its last character struck through. A frame gets that room from the inset it
+ * is laid out at - the shape is drawn out to twice that offset - but a tag sitting in the corner itself
+ * has no inset to give it, and pads its text by this instead.
+ */
+export const FRAME_TAG_CORNER_CUT = 12;
 
 /**
  * The height of the tab a package is drawn with - the flap along its top edge that makes the shape

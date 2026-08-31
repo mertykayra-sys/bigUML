@@ -37,8 +37,8 @@ export function storableText(text: string): string | undefined {
 }
 
 /**
- * What a note can hold, which is everything the grammar can lex: the characters above, plus the six
- * that JSON is structured with.
+ * What a note - or any other field the grammar reads as free text and draws as typed - can hold, which
+ * is everything the grammar can lex: the characters above, plus the six that JSON is structured with.
  *
  * Those six have no terminal and never can have - a terminal matching `[` would shadow the `[` that
  * opens every array in the file - but `LangiumText` takes them as keywords, which is a parser-level
@@ -50,6 +50,12 @@ export function storableText(text: string): string | undefined {
  * brackets the notation writes it in and a multiplicity is a value in a fixed shape - for those, a
  * bracket arriving in the text is notation the user retyped, and dropping it is how it is taken back
  * off. A note has no notation to strip: it is prose, and a bracket in prose is a bracket.
+ *
+ * A message's name is the other field of that kind, and for the same reason: what is written on the line
+ * is the operation the message calls, so the parentheses of `validate()` and the comma of
+ * `login(usr, pwd)` are part of what the user said and not a mark this tool put there to take back off.
+ * Which names go through here rather than through {@link storableName} follows from the grammar - see
+ * `hasTextName`.
  */
 const STORABLE_PROSE_CHARACTER = /[\w *.+#()<>=?!|~^&%$@;'`/[\]{},:-]/;
 
@@ -60,16 +66,26 @@ export function storableProse(text: string): string | undefined {
 
 /**
  * What a plain string property can hold, which is narrower still: a name is parsed as `LangiumName`, so
- * it takes word characters, `_`, `*`, `-`, blanks between words, and the brackets and braces - and no
- * other punctuation. A `.` or a `(` in a name is notation, and notation has a property of its own to go
- * in; a bracket is not notation of any one thing, so `[ok]`, `{abstract}` and `List[T]` stay as typed.
+ * it takes word characters, `_`, `*`, `-`, blanks between words, the brackets and braces, and `:` and
+ * `/` - and no other punctuation. A `.` or a `(` in a name is notation, and notation has a property of
+ * its own to go in.
+ *
+ * Not every name, though. A few are declared `@Language.text` and parsed as `LangiumText` because the
+ * label *is* the name - a message's, which is the operation it calls - and those go through
+ * {@link storableProse} instead. `hasTextName` is which, generated from the definitions so that the rule
+ * a name is read with and the filter it is written through cannot come apart.
+ *
+ * The rest are not notation of any one thing, so they stay as typed. `[ok]`, `{abstract}` and `List[T]`
+ * are written into names because the name is the only field there is for them. So is the colon: a
+ * lifeline is called `customer : Customer` and an instance `order : Order`, which is one name and not two
+ * properties - and a slash goes the same way, in a qualified or derived name like `ui/main` or `/total`.
  *
  * A name that could not be read back is what broke a diagram in the wild: `[ok]` typed onto a control
- * flow's label was stored as its name, the file was written, and it never opened again. The brackets are
- * in the grammar now (see `terminals.langium`), which is what makes them storable here - the whitelist
- * says what the grammar can read back, and nothing more.
+ * flow's label was stored as its name, the file was written, and it never opened again. Each of these is
+ * in the grammar (see `terminals.langium`), which is what makes it storable here - the whitelist says
+ * what the grammar can read back, and nothing more.
  */
-const STORABLE_NAME_CHARACTER = /[\w *[\]{}-]/;
+const STORABLE_NAME_CHARACTER = /[\w *[\]{}:/-]/;
 
 /** A name as it can be stored, or `undefined` where nothing storable is left of it. */
 export function storableName(text: string): string | undefined {

@@ -9,7 +9,19 @@
  **********************************************************************************/
 
 import { ArrayMaxSize, MinLength, ValidateIf } from 'class-validator';
-import { Class, DataType, Property } from '../langium/language/ast.js';
+import { Class, DataType, DestructionOccurrenceSpecification, Lifeline, Property } from '../langium/language/ast.js';
+
+export class LifelineValidationElement {
+    constructor(src: Lifeline) {
+        Object.assign(this, src);
+    }
+
+    @ValidateIf(o => !o.className)
+    @MinLength(1, { message: 'A lifeline must be named, or must name the class it represents' })
+    name?: string;
+    @ArrayMaxSize(1, { message: 'A lifeline can only be destroyed once' }) destructions?: Array<DestructionOccurrenceSpecification>;
+    className?: string;
+}
 
 export class ClassValidationElement {
     constructor(src: Class) {

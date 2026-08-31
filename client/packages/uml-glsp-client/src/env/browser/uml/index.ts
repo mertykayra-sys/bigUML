@@ -12,7 +12,7 @@ import { umlCommunicationDiagramModule } from './diagram/communication/communica
 import { umlDeploymentDiagramModule } from './diagram/deployment/deployment.module.js';
 import { umlInformationFlowDiagramModule } from './diagram/information_flow/di.config.js';
 import { umlPackageDiagramModule } from './diagram/package/package.module.js';
-import { umlSequenceDiagramModule } from './diagram/sequence/di.config.js';
+import { umlSequenceDiagramModule } from './diagram/sequence/sequence.module.js';
 import { umlStateMachineDiagramModule } from './diagram/state-machine/state-machine.module.js';
 import { umlUseCaseDiagramModule } from './diagram/usecase/use-case.module.js';
 import { umlModule } from './uml.module.js';

@@ -33,10 +33,12 @@ export type UmlDiagramKeywordNames =
     | "\"Actor\""
     | "\"Artifact\""
     | "\"Association\""
+    | "\"BehaviorExecutionSpecification\""
     | "\"CentralBufferNode\""
     | "\"Choice\""
     | "\"Class\""
     | "\"ClassDiagram\""
+    | "\"CombinedFragment\""
     | "\"CommunicationDiagram\""
     | "\"CommunicationPath\""
     | "\"ControlFlow\""
@@ -50,7 +52,10 @@ export type UmlDiagramKeywordNames =
     | "\"DeploymentNode\""
     | "\"DeploymentPackage\""
     | "\"DeploymentSpecification\""
+    | "\"DestructionOccurrenceSpecification\""
     | "\"Device\""
+    | "\"DurationConstraint\""
+    | "\"Edge\""
     | "\"ElementImport\""
     | "\"ElementWithSizeAndPosition\""
     | "\"EntryPoint\""
@@ -63,6 +68,7 @@ export type UmlDiagramKeywordNames =
     | "\"FlowFinalNode\""
     | "\"Fork\""
     | "\"ForkNode\""
+    | "\"Gate\""
     | "\"Generalization\""
     | "\"Include\""
     | "\"InformationFlow\""
@@ -72,6 +78,8 @@ export type UmlDiagramKeywordNames =
     | "\"InputPin\""
     | "\"InstanceSpecification\""
     | "\"Interaction\""
+    | "\"InteractionOperand\""
+    | "\"InteractionUse\""
     | "\"Interface\""
     | "\"InterfaceRealization\""
     | "\"Join\""
@@ -81,6 +89,7 @@ export type UmlDiagramKeywordNames =
     | "\"Manifestation\""
     | "\"MergeNode\""
     | "\"Message\""
+    | "\"MessageEnd\""
     | "\"Node\""
     | "\"Note\""
     | "\"OpaqueAction\""
@@ -97,12 +106,16 @@ export type UmlDiagramKeywordNames =
     | "\"Realization\""
     | "\"Reference\""
     | "\"Region\""
+    | "\"Route\""
+    | "\"RoutePoint\""
     | "\"SendSignalAction\""
+    | "\"SequenceDiagram\""
     | "\"ShallowHistory\""
     | "\"Size\""
     | "\"Slot\""
     | "\"SlotDefiningFeature\""
     | "\"State\""
+    | "\"StateInvariant\""
     | "\"StateMachine\""
     | "\"StateMachineDiagram\""
     | "\"StatePart\""
@@ -120,13 +133,20 @@ export type UmlDiagramKeywordNames =
     | "\"__refType\""
     | "\"__type\""
     | "\"__value\""
+    | "\"actualGates\""
     | "\"aggregation\""
     | "\"alias\""
+    | "\"arguments\""
     | "\"artifacts\""
+    | "\"attributeName\""
     | "\"body\""
+    | "\"className\""
+    | "\"collaborationUse\""
     | "\"concurrency\""
+    | "\"decomposition\""
     | "\"definingFeature\""
     | "\"deploymentSpecifications\""
+    | "\"destructions\""
     | "\"devices\""
     | "\"diagram\""
     | "\"diagramType\""
@@ -135,9 +155,15 @@ export type UmlDiagramKeywordNames =
     | "\"element\""
     | "\"entities\""
     | "\"executionEnvironments\""
+    | "\"executions\""
+    | "\"fill\""
+    | "\"formalGates\""
     | "\"guard\""
+    | "\"head\""
     | "\"height\""
     | "\"inputPins\""
+    | "\"interactionOperator\""
+    | "\"invariant\""
     | "\"isAbstract\""
     | "\"isActive\""
     | "\"isDerived\""
@@ -151,8 +177,12 @@ export type UmlDiagramKeywordNames =
     | "\"isStream\""
     | "\"isSubstitutable\""
     | "\"isUnique\""
+    | "\"keyword\""
     | "\"kind\""
     | "\"lifelines\""
+    | "\"loopMax\""
+    | "\"loopMin\""
+    | "\"messageSort\""
     | "\"messages\""
     | "\"metaInfos\""
     | "\"multiplicity\""
@@ -161,6 +191,8 @@ export type UmlDiagramKeywordNames =
     | "\"nestedEnvironments\""
     | "\"nestedNodes\""
     | "\"nodes\""
+    | "\"notation\""
+    | "\"operands\""
     | "\"operations\""
     | "\"orientation\""
     | "\"outputPins\""
@@ -168,11 +200,15 @@ export type UmlDiagramKeywordNames =
     | "\"parameters\""
     | "\"parts\""
     | "\"partsHeight\""
+    | "\"points\""
     | "\"properties\""
     | "\"propertyType\""
+    | "\"refersTo\""
     | "\"regionHeight\""
     | "\"regions\""
     | "\"relations\""
+    | "\"returnValue\""
+    | "\"selector\""
     | "\"slots\""
     | "\"source\""
     | "\"sourceAggregation\""
@@ -180,6 +216,9 @@ export type UmlDiagramKeywordNames =
     | "\"sourceMultiplicity\""
     | "\"sourceName\""
     | "\"sourcePoint\""
+    | "\"specification\""
+    | "\"stateInvariants\""
+    | "\"stereotype\""
     | "\"subpartitions\""
     | "\"subvertices\""
     | "\"target\""
@@ -202,35 +241,61 @@ export type UmlDiagramKeywordNames =
     | ","
     | ":"
     | "ACTIVITY"
+    | "ACTOR"
+    | "ALT"
+    | "ASSERT"
+    | "ASYNCH_CALL"
+    | "ASYNCH_SIGNAL"
+    | "BOUNDARY"
+    | "BOX"
+    | "BREAK"
     | "CLASS"
     | "COMMUNICATION"
     | "COMPOSITE"
     | "CONCURRENT"
+    | "CONSIDER"
+    | "CONSTRAINT"
     | "CREATE"
+    | "CREATE_MESSAGE"
+    | "CRITICAL"
     | "DELETE"
+    | "DELETE_MESSAGE"
     | "DEPLOYMENT"
     | "EAST"
     | "EXTERNAL"
     | "GUARDED"
     | "HORIZONTAL"
+    | "IGNORE"
     | "IN"
     | "INFORMATION_FLOW"
     | "INOUT"
     | "INTERNAL"
     | "LOCAL"
+    | "LOOP"
+    | "NEG"
     | "NONE"
     | "NORTH"
+    | "OPT"
     | "OUT"
     | "PACKAGE"
+    | "PAR"
     | "PRIVATE"
     | "PROTECTED"
     | "PUBLIC"
     | "READ"
+    | "REPLY"
     | "RETURN"
+    | "SEQ"
+    | "SEQUENCE"
     | "SEQUENTIAL"
     | "SHARED"
+    | "SOLID"
     | "SOUTH"
+    | "STATE"
     | "STATE_MACHINE"
+    | "STRICT"
+    | "SYNCH_CALL"
+    | "TRANSPARENT"
     | "UPDATE"
     | "USE_CASE"
     | "VERTICAL"
@@ -535,6 +600,29 @@ export function isAssociation(item: unknown): item is Association {
     return reflection.isInstance(item, Association.$type);
 }
 
+export interface BehaviorExecutionSpecification extends langium.AstNode {
+    readonly $container: Activity | ActivityPartition | BehaviorExecutionSpecification | DeploymentModel | DeploymentPackage | Lifeline | Package | Region | SequenceDiagram;
+    readonly $type: 'BehaviorExecutionSpecification';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    executions: Array<BehaviorExecutionSpecification>;
+    name?: LangiumName;
+    visibility?: Visibility;
+}
+
+export const BehaviorExecutionSpecification = {
+    $type: 'BehaviorExecutionSpecification',
+    __id: '__id',
+    __unknown: '__unknown',
+    executions: 'executions',
+    name: 'name',
+    visibility: 'visibility'
+} as const;
+
+export function isBehaviorExecutionSpecification(item: unknown): item is BehaviorExecutionSpecification {
+    return reflection.isInstance(item, BehaviorExecutionSpecification.$type);
+}
+
 export interface CentralBufferNode extends langium.AstNode {
     readonly $container: Activity | ActivityDiagram | ActivityPartition | DeploymentModel | DeploymentPackage | Package | Region;
     readonly $type: 'CentralBufferNode';
@@ -657,6 +745,37 @@ export const ClassDiagramNodes = {
 
 export function isClassDiagramNodes(item: unknown): item is ClassDiagramNodes {
     return reflection.isInstance(item, ClassDiagramNodes.$type);
+}
+
+export interface CombinedFragment extends langium.AstNode {
+    readonly $container: Activity | ActivityPartition | DeploymentModel | DeploymentPackage | Package | Region | SequenceDiagram;
+    readonly $type: 'CombinedFragment';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    fill?: FrameFill;
+    interactionOperator?: InteractionOperator;
+    loopMax?: LangiumText;
+    loopMin?: LangiumText;
+    messages?: LangiumText;
+    name?: LangiumName;
+    operands: Array<InteractionOperand>;
+}
+
+export const CombinedFragment = {
+    $type: 'CombinedFragment',
+    __id: '__id',
+    __unknown: '__unknown',
+    fill: 'fill',
+    interactionOperator: 'interactionOperator',
+    loopMax: 'loopMax',
+    loopMin: 'loopMin',
+    messages: 'messages',
+    name: 'name',
+    operands: 'operands'
+} as const;
+
+export function isCombinedFragment(item: unknown): item is CombinedFragment {
+    return reflection.isInstance(item, CombinedFragment.$type);
 }
 
 export interface CommunicationDiagram extends langium.AstNode {
@@ -1070,6 +1189,27 @@ export function isDeploymentSpecification(item: unknown): item is DeploymentSpec
     return reflection.isInstance(item, DeploymentSpecification.$type);
 }
 
+export interface DestructionOccurrenceSpecification extends langium.AstNode {
+    readonly $container: Activity | ActivityPartition | DeploymentModel | DeploymentPackage | Lifeline | Package | Region | SequenceDiagram;
+    readonly $type: 'DestructionOccurrenceSpecification';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    name?: LangiumName;
+    visibility?: Visibility;
+}
+
+export const DestructionOccurrenceSpecification = {
+    $type: 'DestructionOccurrenceSpecification',
+    __id: '__id',
+    __unknown: '__unknown',
+    name: 'name',
+    visibility: 'visibility'
+} as const;
+
+export function isDestructionOccurrenceSpecification(item: unknown): item is DestructionOccurrenceSpecification {
+    return reflection.isInstance(item, DestructionOccurrenceSpecification.$type);
+}
+
 export interface Device extends langium.AstNode {
     readonly $container: Activity | ActivityPartition | DeploymentDiagram | DeploymentModel | DeploymentNode | DeploymentPackage | Package | Region;
     readonly $type: 'Device';
@@ -1115,7 +1255,7 @@ export function isDiagram(item: unknown): item is Diagram {
     return reflection.isInstance(item, Diagram.$type);
 }
 
-export type DiagramType = ActivityDiagram | ClassDiagram | CommunicationDiagram | DeploymentDiagram | InformationFlowDiagram | PackageDiagram | StateMachineDiagram | UseCaseDiagram;
+export type DiagramType = ActivityDiagram | ClassDiagram | CommunicationDiagram | DeploymentDiagram | InformationFlowDiagram | PackageDiagram | SequenceDiagram | StateMachineDiagram | UseCaseDiagram;
 
 export const DiagramType = {
     $type: 'DiagramType'
@@ -1123,6 +1263,27 @@ export const DiagramType = {
 
 export function isDiagramType(item: unknown): item is DiagramType {
     return reflection.isInstance(item, DiagramType.$type);
+}
+
+export interface DurationConstraint extends langium.AstNode {
+    readonly $container: Activity | ActivityPartition | DeploymentModel | DeploymentPackage | Package | Region | SequenceDiagram;
+    readonly $type: 'DurationConstraint';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    orientation?: Orientation;
+    specification?: LangiumText;
+}
+
+export const DurationConstraint = {
+    $type: 'DurationConstraint',
+    __id: '__id',
+    __unknown: '__unknown',
+    orientation: 'orientation',
+    specification: 'specification'
+} as const;
+
+export function isDurationConstraint(item: unknown): item is DurationConstraint {
+    return reflection.isInstance(item, DurationConstraint.$type);
 }
 
 export type Edge = ControlFlow | InformationFlow | Message | Relation | Transition;
@@ -1408,6 +1569,31 @@ export function isForkNode(item: unknown): item is ForkNode {
     return reflection.isInstance(item, ForkNode.$type);
 }
 
+export type FrameFill = 'SOLID' | 'TRANSPARENT';
+
+export function isFrameFill(item: unknown): item is FrameFill {
+    return item === 'SOLID' || item === 'TRANSPARENT';
+}
+
+export interface Gate extends langium.AstNode {
+    readonly $container: Activity | ActivityPartition | DeploymentModel | DeploymentPackage | Interaction | InteractionUse | Package | Region | SequenceDiagram;
+    readonly $type: 'Gate';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    name?: LangiumName;
+}
+
+export const Gate = {
+    $type: 'Gate',
+    __id: '__id',
+    __unknown: '__unknown',
+    name: 'name'
+} as const;
+
+export function isGate(item: unknown): item is Gate {
+    return reflection.isInstance(item, Gate.$type);
+}
+
 export interface Generalization extends Relation {
     readonly $container: ClassDiagram | DeploymentDiagram | UseCaseDiagram;
     readonly $type: 'Generalization';
@@ -1617,10 +1803,11 @@ export function isInstanceSpecification(item: unknown): item is InstanceSpecific
 }
 
 export interface Interaction extends langium.AstNode {
-    readonly $container: Activity | ActivityPartition | CommunicationDiagram | DeploymentModel | DeploymentPackage | Package | Region;
+    readonly $container: Activity | ActivityPartition | CommunicationDiagram | DeploymentModel | DeploymentPackage | Package | Region | SequenceDiagram;
     readonly $type: 'Interaction';
     __id: string;
     __unknown: Array<UnknownProperty>;
+    formalGates: Array<Gate>;
     lifelines: Array<Lifeline>;
     messages: Array<Message>;
     name: LangiumName;
@@ -1631,6 +1818,7 @@ export const Interaction = {
     $type: 'Interaction',
     __id: '__id',
     __unknown: '__unknown',
+    formalGates: 'formalGates',
     lifelines: 'lifelines',
     messages: 'messages',
     name: 'name',
@@ -1639,6 +1827,66 @@ export const Interaction = {
 
 export function isInteraction(item: unknown): item is Interaction {
     return reflection.isInstance(item, Interaction.$type);
+}
+
+export interface InteractionOperand extends langium.AstNode {
+    readonly $container: CombinedFragment | SequenceDiagram;
+    readonly $type: 'InteractionOperand';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    guard?: LangiumText;
+    name?: LangiumName;
+}
+
+export const InteractionOperand = {
+    $type: 'InteractionOperand',
+    __id: '__id',
+    __unknown: '__unknown',
+    guard: 'guard',
+    name: 'name'
+} as const;
+
+export function isInteractionOperand(item: unknown): item is InteractionOperand {
+    return reflection.isInstance(item, InteractionOperand.$type);
+}
+
+export type InteractionOperator = 'ALT' | 'ASSERT' | 'BREAK' | 'CONSIDER' | 'CRITICAL' | 'IGNORE' | 'LOOP' | 'NEG' | 'OPT' | 'PAR' | 'SEQ' | 'STRICT';
+
+export function isInteractionOperator(item: unknown): item is InteractionOperator {
+    return item === 'SEQ' || item === 'ALT' || item === 'OPT' || item === 'BREAK' || item === 'PAR' || item === 'STRICT' || item === 'LOOP' || item === 'CRITICAL' || item === 'NEG' || item === 'ASSERT' || item === 'IGNORE' || item === 'CONSIDER';
+}
+
+export interface InteractionUse extends langium.AstNode {
+    readonly $container: Activity | ActivityPartition | DeploymentModel | DeploymentPackage | Package | Region | SequenceDiagram;
+    readonly $type: 'InteractionUse';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    actualGates: Array<Gate>;
+    arguments?: LangiumText;
+    attributeName?: LangiumText;
+    collaborationUse?: LangiumText;
+    fill?: FrameFill;
+    keyword?: LangiumName;
+    refersTo?: LangiumText;
+    returnValue?: LangiumText;
+}
+
+export const InteractionUse = {
+    $type: 'InteractionUse',
+    __id: '__id',
+    __unknown: '__unknown',
+    actualGates: 'actualGates',
+    arguments: 'arguments',
+    attributeName: 'attributeName',
+    collaborationUse: 'collaborationUse',
+    fill: 'fill',
+    keyword: 'keyword',
+    refersTo: 'refersTo',
+    returnValue: 'returnValue'
+} as const;
+
+export function isInteractionUse(item: unknown): item is InteractionUse {
+    return reflection.isInstance(item, InteractionUse.$type);
 }
 
 export interface Interface extends langium.AstNode {
@@ -1831,11 +2079,20 @@ export function isLangiumText(item: unknown): item is LangiumText {
 }
 
 export interface Lifeline extends langium.AstNode {
-    readonly $container: Activity | ActivityPartition | CommunicationDiagram | DeploymentModel | DeploymentPackage | Interaction | Package | Region;
+    readonly $container: Activity | ActivityPartition | CommunicationDiagram | DeploymentModel | DeploymentPackage | Interaction | Package | Region | SequenceDiagram;
     readonly $type: 'Lifeline';
     __id: string;
     __unknown: Array<UnknownProperty>;
-    name: LangiumName;
+    className?: LangiumText;
+    decomposition?: LangiumText;
+    destructions: Array<DestructionOccurrenceSpecification>;
+    executions: Array<BehaviorExecutionSpecification>;
+    head?: LifelineHead;
+    isActive: boolean;
+    name?: LangiumName;
+    selector?: LangiumText;
+    stateInvariants: Array<StateInvariant>;
+    stereotype?: LangiumName;
     visibility?: Visibility;
 }
 
@@ -1843,12 +2100,27 @@ export const Lifeline = {
     $type: 'Lifeline',
     __id: '__id',
     __unknown: '__unknown',
+    className: 'className',
+    decomposition: 'decomposition',
+    destructions: 'destructions',
+    executions: 'executions',
+    head: 'head',
+    isActive: 'isActive',
     name: 'name',
+    selector: 'selector',
+    stateInvariants: 'stateInvariants',
+    stereotype: 'stereotype',
     visibility: 'visibility'
 } as const;
 
 export function isLifeline(item: unknown): item is Lifeline {
     return reflection.isInstance(item, Lifeline.$type);
+}
+
+export type LifelineHead = 'ACTOR' | 'BOUNDARY' | 'BOX';
+
+export function isLifelineHead(item: unknown): item is LifelineHead {
+    return item === 'BOX' || item === 'ACTOR' || item === 'BOUNDARY';
 }
 
 export interface LiteralSpecification extends langium.AstNode {
@@ -1919,13 +2191,15 @@ export function isMergeNode(item: unknown): item is MergeNode {
 }
 
 export interface Message extends langium.AstNode {
-    readonly $container: CommunicationDiagram | Interaction;
+    readonly $container: CommunicationDiagram | Interaction | SequenceDiagram;
     readonly $type: 'Message';
     __id: string;
     __unknown: Array<UnknownProperty>;
-    name?: LangiumName;
-    source: langium.Reference<Lifeline>;
-    target: langium.Reference<Lifeline>;
+    messageSort?: MessageSort;
+    name?: LangiumText;
+    source: langium.Reference<MessageEnd>;
+    stereotype?: LangiumName;
+    target: langium.Reference<MessageEnd>;
     visibility?: Visibility;
 }
 
@@ -1933,8 +2207,10 @@ export const Message = {
     $type: 'Message',
     __id: '__id',
     __unknown: '__unknown',
+    messageSort: 'messageSort',
     name: 'name',
     source: 'source',
+    stereotype: 'stereotype',
     target: 'target',
     visibility: 'visibility'
 } as const;
@@ -1943,7 +2219,23 @@ export function isMessage(item: unknown): item is Message {
     return reflection.isInstance(item, Message.$type);
 }
 
-export type MetaInfo = Position | Size;
+export type MessageEnd = Gate | Lifeline;
+
+export const MessageEnd = {
+    $type: 'MessageEnd'
+} as const;
+
+export function isMessageEnd(item: unknown): item is MessageEnd {
+    return reflection.isInstance(item, MessageEnd.$type);
+}
+
+export type MessageSort = 'ASYNCH_CALL' | 'ASYNCH_SIGNAL' | 'CREATE_MESSAGE' | 'DELETE_MESSAGE' | 'REPLY' | 'SYNCH_CALL';
+
+export function isMessageSort(item: unknown): item is MessageSort {
+    return item === 'SYNCH_CALL' || item === 'ASYNCH_CALL' || item === 'ASYNCH_SIGNAL' || item === 'REPLY' || item === 'CREATE_MESSAGE' || item === 'DELETE_MESSAGE';
+}
+
+export type MetaInfo = Position | Route | Size;
 
 export const MetaInfo = {
     $type: 'MetaInfo'
@@ -1953,7 +2245,7 @@ export function isMetaInfo(item: unknown): item is MetaInfo {
     return reflection.isInstance(item, MetaInfo.$type);
 }
 
-export type Node = AcceptEventAction | Activity | ActivityFinalNode | ActivityParameterNode | ActivityPartition | Actor | Artifact | CentralBufferNode | Choice | Class | DataType | DecisionNode | DeepHistory | DeploymentModel | DeploymentNode | DeploymentPackage | DeploymentSpecification | Device | EntryPoint | Enumeration | ExecutionEnvironment | ExitPoint | FinalState | FlowFinalNode | Fork | ForkNode | InitialNode | InitialState | InstanceSpecification | Interaction | Interface | Join | JoinNode | Lifeline | MergeNode | Note | OpaqueAction | Operation | Package | PrimitiveType | Region | SendSignalAction | ShallowHistory | State | StateMachine | Subject | Terminate | TextLabel | UseCase;
+export type Node = AcceptEventAction | Activity | ActivityFinalNode | ActivityParameterNode | ActivityPartition | Actor | Artifact | BehaviorExecutionSpecification | CentralBufferNode | Choice | Class | CombinedFragment | DataType | DecisionNode | DeepHistory | DeploymentModel | DeploymentNode | DeploymentPackage | DeploymentSpecification | DestructionOccurrenceSpecification | Device | DurationConstraint | EntryPoint | Enumeration | ExecutionEnvironment | ExitPoint | FinalState | FlowFinalNode | Fork | ForkNode | InitialNode | InitialState | InstanceSpecification | Interaction | InteractionUse | Interface | Join | JoinNode | MergeNode | MessageEnd | Note | OpaqueAction | Operation | Package | PrimitiveType | Region | SendSignalAction | ShallowHistory | State | StateInvariant | StateMachine | Subject | Terminate | TextLabel | UseCase;
 
 export const Node = {
     $type: 'Node'
@@ -1964,7 +2256,7 @@ export function isNode(item: unknown): item is Node {
 }
 
 export interface Note extends langium.AstNode {
-    readonly $container: Activity | ActivityDiagram | ActivityPartition | ClassDiagram | CommunicationDiagram | DeploymentDiagram | DeploymentModel | DeploymentPackage | InformationFlowDiagram | Package | PackageDiagram | Region | StateMachineDiagram | UseCaseDiagram;
+    readonly $container: Activity | ActivityDiagram | ActivityPartition | ClassDiagram | CommunicationDiagram | DeploymentDiagram | DeploymentModel | DeploymentPackage | InformationFlowDiagram | Package | PackageDiagram | Region | SequenceDiagram | StateMachineDiagram | UseCaseDiagram;
     readonly $type: 'Note';
     __id: string;
     __unknown: Array<UnknownProperty>;
@@ -2259,13 +2551,15 @@ export interface PrimitiveType extends langium.AstNode {
     __id: string;
     __unknown: Array<UnknownProperty>;
     name: LangiumName;
+    stereotype?: LangiumName;
 }
 
 export const PrimitiveType = {
     $type: 'PrimitiveType',
     __id: '__id',
     __unknown: '__unknown',
-    name: 'name'
+    name: 'name',
+    stereotype: 'stereotype'
 } as const;
 
 export function isPrimitiveType(item: unknown): item is PrimitiveType {
@@ -2384,6 +2678,48 @@ export function isRelation(item: unknown): item is Relation {
     return reflection.isInstance(item, Relation.$type);
 }
 
+export interface Route extends langium.AstNode {
+    readonly $container: Diagram;
+    readonly $type: 'Route';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    element: langium.Reference<Edge>;
+    points: Array<RoutePoint>;
+}
+
+export const Route = {
+    $type: 'Route',
+    __id: '__id',
+    __unknown: '__unknown',
+    element: 'element',
+    points: 'points'
+} as const;
+
+export function isRoute(item: unknown): item is Route {
+    return reflection.isInstance(item, Route.$type);
+}
+
+export interface RoutePoint extends langium.AstNode {
+    readonly $container: Route;
+    readonly $type: 'RoutePoint';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    x: number;
+    y: number;
+}
+
+export const RoutePoint = {
+    $type: 'RoutePoint',
+    __id: '__id',
+    __unknown: '__unknown',
+    x: 'x',
+    y: 'y'
+} as const;
+
+export function isRoutePoint(item: unknown): item is RoutePoint {
+    return reflection.isInstance(item, RoutePoint.$type);
+}
+
 export interface SendSignalAction extends langium.AstNode {
     readonly $container: Activity | ActivityDiagram | ActivityPartition | DeploymentModel | DeploymentPackage | Package | Region;
     readonly $type: 'SendSignalAction';
@@ -2403,6 +2739,59 @@ export const SendSignalAction = {
 
 export function isSendSignalAction(item: unknown): item is SendSignalAction {
     return reflection.isInstance(item, SendSignalAction.$type);
+}
+
+export interface SequenceDiagram extends langium.AstNode {
+    readonly $container: Diagram;
+    readonly $type: 'SequenceDiagram';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    diagramType: 'SEQUENCE';
+    entities: Array<SequenceDiagramNodes>;
+    relations: Array<SequenceDiagramEdges>;
+}
+
+export const SequenceDiagram = {
+    $type: 'SequenceDiagram',
+    __id: '__id',
+    __unknown: '__unknown',
+    diagramType: 'diagramType',
+    entities: 'entities',
+    relations: 'relations'
+} as const;
+
+export function isSequenceDiagram(item: unknown): item is SequenceDiagram {
+    return reflection.isInstance(item, SequenceDiagram.$type);
+}
+
+export type SequenceDiagramEdges = Message;
+
+export const SequenceDiagramEdges = {
+    $type: 'SequenceDiagramEdges'
+} as const;
+
+export function isSequenceDiagramEdges(item: unknown): item is SequenceDiagramEdges {
+    return reflection.isInstance(item, SequenceDiagramEdges.$type);
+}
+
+export type SequenceDiagramElements = SequenceDiagramEdges | SequenceDiagramNodes;
+
+export const SequenceDiagramElements = {
+    $type: 'SequenceDiagramElements'
+} as const;
+
+export function isSequenceDiagramElements(item: unknown): item is SequenceDiagramElements {
+    return reflection.isInstance(item, SequenceDiagramElements.$type);
+}
+
+export type SequenceDiagramNodes = BehaviorExecutionSpecification | CombinedFragment | DestructionOccurrenceSpecification | DurationConstraint | Gate | Interaction | InteractionOperand | InteractionUse | Lifeline | Note | StateInvariant | TextLabel;
+
+export const SequenceDiagramNodes = {
+    $type: 'SequenceDiagramNodes'
+} as const;
+
+export function isSequenceDiagramNodes(item: unknown): item is SequenceDiagramNodes {
+    return reflection.isInstance(item, SequenceDiagramNodes.$type);
 }
 
 export interface ShallowHistory extends langium.AstNode {
@@ -2509,6 +2898,33 @@ export const State = {
 
 export function isState(item: unknown): item is State {
     return reflection.isInstance(item, State.$type);
+}
+
+export interface StateInvariant extends langium.AstNode {
+    readonly $container: Activity | ActivityPartition | DeploymentModel | DeploymentPackage | Lifeline | Package | Region | SequenceDiagram;
+    readonly $type: 'StateInvariant';
+    __id: string;
+    __unknown: Array<UnknownProperty>;
+    invariant?: LangiumText;
+    notation?: StateInvariantNotation;
+}
+
+export const StateInvariant = {
+    $type: 'StateInvariant',
+    __id: '__id',
+    __unknown: '__unknown',
+    invariant: 'invariant',
+    notation: 'notation'
+} as const;
+
+export function isStateInvariant(item: unknown): item is StateInvariant {
+    return reflection.isInstance(item, StateInvariant.$type);
+}
+
+export type StateInvariantNotation = 'CONSTRAINT' | 'STATE';
+
+export function isStateInvariantNotation(item: unknown): item is StateInvariantNotation {
+    return item === 'CONSTRAINT' || item === 'STATE';
 }
 
 export interface StateMachine extends langium.AstNode {
@@ -2682,7 +3098,7 @@ export function isTerminate(item: unknown): item is Terminate {
 }
 
 export interface TextLabel extends langium.AstNode {
-    readonly $container: Activity | ActivityDiagram | ActivityPartition | ClassDiagram | CommunicationDiagram | DeploymentDiagram | DeploymentModel | DeploymentPackage | InformationFlowDiagram | Package | PackageDiagram | Region | StateMachineDiagram | UseCaseDiagram;
+    readonly $container: Activity | ActivityDiagram | ActivityPartition | ClassDiagram | CommunicationDiagram | DeploymentDiagram | DeploymentModel | DeploymentPackage | InformationFlowDiagram | Package | PackageDiagram | Region | SequenceDiagram | StateMachineDiagram | UseCaseDiagram;
     readonly $type: 'TextLabel';
     __id: string;
     __unknown: Array<UnknownProperty>;
@@ -2743,7 +3159,7 @@ export function isTransitionKind(item: unknown): item is TransitionKind {
     return item === 'INTERNAL' || item === 'EXTERNAL' || item === 'LOCAL';
 }
 
-export type Unbounded = EnumerationLiteral | InputPin | LiteralSpecification | OutputPin | Parameter | Property | Slot | StatePart;
+export type Unbounded = EnumerationLiteral | InputPin | InteractionOperand | LiteralSpecification | OutputPin | Parameter | Property | Slot | StatePart;
 
 export const Unbounded = {
     $type: 'Unbounded'
@@ -2774,7 +3190,7 @@ export function isUnionType_1(item: unknown): item is UnionType_1 {
 }
 
 export interface UnknownProperty extends langium.AstNode {
-    readonly $container: Abstraction | AcceptEventAction | Activity | ActivityDiagram | ActivityFinalNode | ActivityParameterNode | ActivityPartition | Actor | Artifact | Association | CentralBufferNode | Choice | Class | ClassDiagram | CommunicationDiagram | CommunicationPath | ControlFlow | DataType | DecisionNode | DeepHistory | Dependency | Deployment | DeploymentDiagram | DeploymentModel | DeploymentNode | DeploymentPackage | DeploymentSpecification | Device | Diagram | ElementImport | EntryPoint | Enumeration | EnumerationLiteral | ExecutionEnvironment | ExitPoint | Extend | FinalState | FlowFinalNode | Fork | ForkNode | Generalization | Include | InformationFlow | InformationFlowDiagram | InitialNode | InitialState | InputPin | InstanceSpecification | Interaction | Interface | InterfaceRealization | Join | JoinNode | Lifeline | LiteralSpecification | Manifestation | MergeNode | Message | Note | OpaqueAction | Operation | OutputPin | Package | PackageDiagram | PackageImport | PackageMerge | Parameter | Position | PrimitiveType | Property | Realization | Region | Relation | SendSignalAction | ShallowHistory | Size | Slot | State | StateMachine | StateMachineDiagram | StatePart | Subject | Substitution | Terminate | TextLabel | Transition | Usage | UseCase | UseCaseDiagram;
+    readonly $container: Abstraction | AcceptEventAction | Activity | ActivityDiagram | ActivityFinalNode | ActivityParameterNode | ActivityPartition | Actor | Artifact | Association | BehaviorExecutionSpecification | CentralBufferNode | Choice | Class | ClassDiagram | CombinedFragment | CommunicationDiagram | CommunicationPath | ControlFlow | DataType | DecisionNode | DeepHistory | Dependency | Deployment | DeploymentDiagram | DeploymentModel | DeploymentNode | DeploymentPackage | DeploymentSpecification | DestructionOccurrenceSpecification | Device | Diagram | DurationConstraint | ElementImport | EntryPoint | Enumeration | EnumerationLiteral | ExecutionEnvironment | ExitPoint | Extend | FinalState | FlowFinalNode | Fork | ForkNode | Gate | Generalization | Include | InformationFlow | InformationFlowDiagram | InitialNode | InitialState | InputPin | InstanceSpecification | Interaction | InteractionOperand | InteractionUse | Interface | InterfaceRealization | Join | JoinNode | Lifeline | LiteralSpecification | Manifestation | MergeNode | Message | Note | OpaqueAction | Operation | OutputPin | Package | PackageDiagram | PackageImport | PackageMerge | Parameter | Position | PrimitiveType | Property | Realization | Region | Relation | Route | RoutePoint | SendSignalAction | SequenceDiagram | ShallowHistory | Size | Slot | State | StateInvariant | StateMachine | StateMachineDiagram | StatePart | Subject | Substitution | Terminate | TextLabel | Transition | Usage | UseCase | UseCaseDiagram;
     readonly $type: 'UnknownProperty';
     key: string;
     value: JsonValue;
@@ -2909,6 +3325,7 @@ export type UmlDiagramAstType = {
     Actor: Actor
     Artifact: Artifact
     Association: Association
+    BehaviorExecutionSpecification: BehaviorExecutionSpecification
     CentralBufferNode: CentralBufferNode
     Choice: Choice
     Class: Class
@@ -2916,6 +3333,7 @@ export type UmlDiagramAstType = {
     ClassDiagramEdges: ClassDiagramEdges
     ClassDiagramElements: ClassDiagramElements
     ClassDiagramNodes: ClassDiagramNodes
+    CombinedFragment: CombinedFragment
     CommunicationDiagram: CommunicationDiagram
     CommunicationDiagramEdges: CommunicationDiagramEdges
     CommunicationDiagramElements: CommunicationDiagramElements
@@ -2936,9 +3354,11 @@ export type UmlDiagramAstType = {
     DeploymentNode: DeploymentNode
     DeploymentPackage: DeploymentPackage
     DeploymentSpecification: DeploymentSpecification
+    DestructionOccurrenceSpecification: DestructionOccurrenceSpecification
     Device: Device
     Diagram: Diagram
     DiagramType: DiagramType
+    DurationConstraint: DurationConstraint
     Edge: Edge
     Element: Element
     ElementImport: ElementImport
@@ -2953,6 +3373,7 @@ export type UmlDiagramAstType = {
     FlowFinalNode: FlowFinalNode
     Fork: Fork
     ForkNode: ForkNode
+    Gate: Gate
     Generalization: Generalization
     Include: Include
     InformationFlow: InformationFlow
@@ -2965,6 +3386,8 @@ export type UmlDiagramAstType = {
     InputPin: InputPin
     InstanceSpecification: InstanceSpecification
     Interaction: Interaction
+    InteractionOperand: InteractionOperand
+    InteractionUse: InteractionUse
     Interface: Interface
     InterfaceRealization: InterfaceRealization
     Join: Join
@@ -2979,6 +3402,7 @@ export type UmlDiagramAstType = {
     Manifestation: Manifestation
     MergeNode: MergeNode
     Message: Message
+    MessageEnd: MessageEnd
     MetaInfo: MetaInfo
     Node: Node
     Note: Note
@@ -2999,12 +3423,19 @@ export type UmlDiagramAstType = {
     Realization: Realization
     Region: Region
     Relation: Relation
+    Route: Route
+    RoutePoint: RoutePoint
     SendSignalAction: SendSignalAction
+    SequenceDiagram: SequenceDiagram
+    SequenceDiagramEdges: SequenceDiagramEdges
+    SequenceDiagramElements: SequenceDiagramElements
+    SequenceDiagramNodes: SequenceDiagramNodes
     ShallowHistory: ShallowHistory
     Size: Size
     Slot: Slot
     SlotDefiningFeature: SlotDefiningFeature
     State: State
+    StateInvariant: StateInvariant
     StateMachine: StateMachine
     StateMachineDiagram: StateMachineDiagram
     StateMachineDiagramEdges: StateMachineDiagramEdges
@@ -3320,6 +3751,29 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [Relation.$type, ClassDiagramEdges.$type, UseCaseDiagramEdges.$type]
         },
+        BehaviorExecutionSpecification: {
+            name: BehaviorExecutionSpecification.$type,
+            properties: {
+                __id: {
+                    name: BehaviorExecutionSpecification.__id
+                },
+                __unknown: {
+                    name: BehaviorExecutionSpecification.__unknown,
+                    defaultValue: []
+                },
+                executions: {
+                    name: BehaviorExecutionSpecification.executions,
+                    defaultValue: []
+                },
+                name: {
+                    name: BehaviorExecutionSpecification.name
+                },
+                visibility: {
+                    name: BehaviorExecutionSpecification.visibility
+                }
+            },
+            superTypes: [Node.$type, SequenceDiagramNodes.$type]
+        },
         CentralBufferNode: {
             name: CentralBufferNode.$type,
             properties: {
@@ -3434,6 +3888,41 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
             properties: {
             },
             superTypes: [ClassDiagramElements.$type]
+        },
+        CombinedFragment: {
+            name: CombinedFragment.$type,
+            properties: {
+                __id: {
+                    name: CombinedFragment.__id
+                },
+                __unknown: {
+                    name: CombinedFragment.__unknown,
+                    defaultValue: []
+                },
+                fill: {
+                    name: CombinedFragment.fill
+                },
+                interactionOperator: {
+                    name: CombinedFragment.interactionOperator
+                },
+                loopMax: {
+                    name: CombinedFragment.loopMax
+                },
+                loopMin: {
+                    name: CombinedFragment.loopMin
+                },
+                messages: {
+                    name: CombinedFragment.messages
+                },
+                name: {
+                    name: CombinedFragment.name
+                },
+                operands: {
+                    name: CombinedFragment.operands,
+                    defaultValue: []
+                }
+            },
+            superTypes: [Node.$type, SequenceDiagramNodes.$type]
         },
         CommunicationDiagram: {
             name: CommunicationDiagram.$type,
@@ -3832,6 +4321,25 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [DeploymentDiagramNodes.$type, Node.$type]
         },
+        DestructionOccurrenceSpecification: {
+            name: DestructionOccurrenceSpecification.$type,
+            properties: {
+                __id: {
+                    name: DestructionOccurrenceSpecification.__id
+                },
+                __unknown: {
+                    name: DestructionOccurrenceSpecification.__unknown,
+                    defaultValue: []
+                },
+                name: {
+                    name: DestructionOccurrenceSpecification.name
+                },
+                visibility: {
+                    name: DestructionOccurrenceSpecification.visibility
+                }
+            },
+            superTypes: [Node.$type, SequenceDiagramNodes.$type]
+        },
         Device: {
             name: Device.$type,
             properties: {
@@ -3885,6 +4393,25 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
             properties: {
             },
             superTypes: []
+        },
+        DurationConstraint: {
+            name: DurationConstraint.$type,
+            properties: {
+                __id: {
+                    name: DurationConstraint.__id
+                },
+                __unknown: {
+                    name: DurationConstraint.__unknown,
+                    defaultValue: []
+                },
+                orientation: {
+                    name: DurationConstraint.orientation
+                },
+                specification: {
+                    name: DurationConstraint.specification
+                }
+            },
+            superTypes: [Node.$type, SequenceDiagramNodes.$type]
         },
         Edge: {
             name: Edge.$type,
@@ -4146,6 +4673,22 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [ActivityDiagramNodes.$type, Node.$type]
         },
+        Gate: {
+            name: Gate.$type,
+            properties: {
+                __id: {
+                    name: Gate.__id
+                },
+                __unknown: {
+                    name: Gate.__unknown,
+                    defaultValue: []
+                },
+                name: {
+                    name: Gate.name
+                }
+            },
+            superTypes: [MessageEnd.$type, SequenceDiagramNodes.$type]
+        },
         Generalization: {
             name: Generalization.$type,
             properties: {
@@ -4351,6 +4894,10 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                     name: Interaction.__unknown,
                     defaultValue: []
                 },
+                formalGates: {
+                    name: Interaction.formalGates,
+                    defaultValue: []
+                },
                 lifelines: {
                     name: Interaction.lifelines,
                     defaultValue: []
@@ -4366,7 +4913,64 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                     name: Interaction.visibility
                 }
             },
-            superTypes: [CommunicationDiagramNodes.$type, Node.$type]
+            superTypes: [CommunicationDiagramNodes.$type, Node.$type, SequenceDiagramNodes.$type]
+        },
+        InteractionOperand: {
+            name: InteractionOperand.$type,
+            properties: {
+                __id: {
+                    name: InteractionOperand.__id
+                },
+                __unknown: {
+                    name: InteractionOperand.__unknown,
+                    defaultValue: []
+                },
+                guard: {
+                    name: InteractionOperand.guard
+                },
+                name: {
+                    name: InteractionOperand.name
+                }
+            },
+            superTypes: [SequenceDiagramNodes.$type, Unbounded.$type]
+        },
+        InteractionUse: {
+            name: InteractionUse.$type,
+            properties: {
+                __id: {
+                    name: InteractionUse.__id
+                },
+                __unknown: {
+                    name: InteractionUse.__unknown,
+                    defaultValue: []
+                },
+                actualGates: {
+                    name: InteractionUse.actualGates,
+                    defaultValue: []
+                },
+                arguments: {
+                    name: InteractionUse.arguments
+                },
+                attributeName: {
+                    name: InteractionUse.attributeName
+                },
+                collaborationUse: {
+                    name: InteractionUse.collaborationUse
+                },
+                fill: {
+                    name: InteractionUse.fill
+                },
+                keyword: {
+                    name: InteractionUse.keyword
+                },
+                refersTo: {
+                    name: InteractionUse.refersTo
+                },
+                returnValue: {
+                    name: InteractionUse.returnValue
+                }
+            },
+            superTypes: [Node.$type, SequenceDiagramNodes.$type]
         },
         Interface: {
             name: Interface.$type,
@@ -4534,14 +5138,45 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                     name: Lifeline.__unknown,
                     defaultValue: []
                 },
+                className: {
+                    name: Lifeline.className
+                },
+                decomposition: {
+                    name: Lifeline.decomposition
+                },
+                destructions: {
+                    name: Lifeline.destructions,
+                    defaultValue: []
+                },
+                executions: {
+                    name: Lifeline.executions,
+                    defaultValue: []
+                },
+                head: {
+                    name: Lifeline.head
+                },
+                isActive: {
+                    name: Lifeline.isActive,
+                    defaultValue: false
+                },
                 name: {
                     name: Lifeline.name
+                },
+                selector: {
+                    name: Lifeline.selector
+                },
+                stateInvariants: {
+                    name: Lifeline.stateInvariants,
+                    defaultValue: []
+                },
+                stereotype: {
+                    name: Lifeline.stereotype
                 },
                 visibility: {
                     name: Lifeline.visibility
                 }
             },
-            superTypes: [CommunicationDiagramNodes.$type, Node.$type]
+            superTypes: [CommunicationDiagramNodes.$type, MessageEnd.$type, SequenceDiagramNodes.$type]
         },
         LiteralSpecification: {
             name: LiteralSpecification.$type,
@@ -4618,22 +5253,34 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                     name: Message.__unknown,
                     defaultValue: []
                 },
+                messageSort: {
+                    name: Message.messageSort
+                },
                 name: {
                     name: Message.name
                 },
                 source: {
                     name: Message.source,
-                    referenceType: Lifeline.$type
+                    referenceType: MessageEnd.$type
+                },
+                stereotype: {
+                    name: Message.stereotype
                 },
                 target: {
                     name: Message.target,
-                    referenceType: Lifeline.$type
+                    referenceType: MessageEnd.$type
                 },
                 visibility: {
                     name: Message.visibility
                 }
             },
-            superTypes: [CommunicationDiagramEdges.$type, Edge.$type]
+            superTypes: [CommunicationDiagramEdges.$type, Edge.$type, SequenceDiagramEdges.$type]
+        },
+        MessageEnd: {
+            name: MessageEnd.$type,
+            properties: {
+            },
+            superTypes: [Node.$type]
         },
         MetaInfo: {
             name: MetaInfo.$type,
@@ -4661,7 +5308,7 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                     name: Note.body
                 }
             },
-            superTypes: [ActivityDiagramNodes.$type, ClassDiagramNodes.$type, CommunicationDiagramNodes.$type, DeploymentDiagramNodes.$type, InformationFlowDiagramNodes.$type, Node.$type, PackageDiagramNodes.$type, StateMachineDiagramNodes.$type, UseCaseDiagramNodes.$type]
+            superTypes: [ActivityDiagramNodes.$type, ClassDiagramNodes.$type, CommunicationDiagramNodes.$type, DeploymentDiagramNodes.$type, InformationFlowDiagramNodes.$type, Node.$type, PackageDiagramNodes.$type, SequenceDiagramNodes.$type, StateMachineDiagramNodes.$type, UseCaseDiagramNodes.$type]
         },
         OpaqueAction: {
             name: OpaqueAction.$type,
@@ -4942,6 +5589,9 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                 },
                 name: {
                     name: PrimitiveType.name
+                },
+                stereotype: {
+                    name: PrimitiveType.stereotype
                 }
             },
             superTypes: [ClassDiagramNodes.$type, DataTypeReference.$type, Node.$type]
@@ -5077,6 +5727,46 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [Edge.$type]
         },
+        Route: {
+            name: Route.$type,
+            properties: {
+                __id: {
+                    name: Route.__id
+                },
+                __unknown: {
+                    name: Route.__unknown,
+                    defaultValue: []
+                },
+                element: {
+                    name: Route.element,
+                    referenceType: Edge.$type
+                },
+                points: {
+                    name: Route.points,
+                    defaultValue: []
+                }
+            },
+            superTypes: [MetaInfo.$type]
+        },
+        RoutePoint: {
+            name: RoutePoint.$type,
+            properties: {
+                __id: {
+                    name: RoutePoint.__id
+                },
+                __unknown: {
+                    name: RoutePoint.__unknown,
+                    defaultValue: []
+                },
+                x: {
+                    name: RoutePoint.x
+                },
+                y: {
+                    name: RoutePoint.y
+                }
+            },
+            superTypes: []
+        },
         SendSignalAction: {
             name: SendSignalAction.$type,
             properties: {
@@ -5095,6 +5785,48 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: [ActivityDiagramNodes.$type, Node.$type]
+        },
+        SequenceDiagram: {
+            name: SequenceDiagram.$type,
+            properties: {
+                __id: {
+                    name: SequenceDiagram.__id
+                },
+                __unknown: {
+                    name: SequenceDiagram.__unknown,
+                    defaultValue: []
+                },
+                diagramType: {
+                    name: SequenceDiagram.diagramType
+                },
+                entities: {
+                    name: SequenceDiagram.entities,
+                    defaultValue: []
+                },
+                relations: {
+                    name: SequenceDiagram.relations,
+                    defaultValue: []
+                }
+            },
+            superTypes: [DiagramType.$type]
+        },
+        SequenceDiagramEdges: {
+            name: SequenceDiagramEdges.$type,
+            properties: {
+            },
+            superTypes: [SequenceDiagramElements.$type]
+        },
+        SequenceDiagramElements: {
+            name: SequenceDiagramElements.$type,
+            properties: {
+            },
+            superTypes: []
+        },
+        SequenceDiagramNodes: {
+            name: SequenceDiagramNodes.$type,
+            properties: {
+            },
+            superTypes: [SequenceDiagramElements.$type]
         },
         ShallowHistory: {
             name: ShallowHistory.$type,
@@ -5200,6 +5932,25 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: [Node.$type, StateMachineDiagramNodes.$type]
+        },
+        StateInvariant: {
+            name: StateInvariant.$type,
+            properties: {
+                __id: {
+                    name: StateInvariant.__id
+                },
+                __unknown: {
+                    name: StateInvariant.__unknown,
+                    defaultValue: []
+                },
+                invariant: {
+                    name: StateInvariant.invariant
+                },
+                notation: {
+                    name: StateInvariant.notation
+                }
+            },
+            superTypes: [Node.$type, SequenceDiagramNodes.$type]
         },
         StateMachine: {
             name: StateMachine.$type,
@@ -5374,7 +6125,7 @@ export class UmlDiagramAstReflection extends langium.AbstractAstReflection {
                     name: TextLabel.body
                 }
             },
-            superTypes: [ActivityDiagramNodes.$type, ClassDiagramNodes.$type, CommunicationDiagramNodes.$type, DeploymentDiagramNodes.$type, InformationFlowDiagramNodes.$type, Node.$type, PackageDiagramNodes.$type, StateMachineDiagramNodes.$type, UseCaseDiagramNodes.$type]
+            superTypes: [ActivityDiagramNodes.$type, ClassDiagramNodes.$type, CommunicationDiagramNodes.$type, DeploymentDiagramNodes.$type, InformationFlowDiagramNodes.$type, Node.$type, PackageDiagramNodes.$type, SequenceDiagramNodes.$type, StateMachineDiagramNodes.$type, UseCaseDiagramNodes.$type]
         },
         Transition: {
             name: Transition.$type,

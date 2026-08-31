@@ -14,6 +14,7 @@ import {
     RequestDeploymentPropertyPaletteActionHandler,
     RequestInformationFlowPropertyPaletteActionHandler,
     RequestPackagePropertyPaletteActionHandler,
+    RequestSequencePropertyPaletteActionHandler,
     RequestStateMachinePropertyPaletteActionHandler,
     RequestUseCasePropertyPaletteActionHandler
 } from '@borkdominik-biguml/big-property-palette/gen/glsp-server';
@@ -21,6 +22,8 @@ import {
     BEHAVIOR_LABEL_PARTS,
     BEHAVIOR_LABEL_PROPERTY_ID,
     composeBehaviorLabel,
+    composeLoopBounds,
+    LOOP_BOUNDS_PROPERTY_ID,
     mergesIntoSamePackage,
     messagesOnLink,
     ORIENTATION_PROPERTY_ID,
@@ -29,14 +32,15 @@ import {
 import { DiagramLanguageMetadata, DiagramModelState } from '@borkdominik-biguml/uml-glsp-server/vscode';
 import type { DiagramLanguageMetadata as DiagramLanguageMetadataType } from '@borkdominik-biguml/uml-glsp-server/vscode';
 import {
+    isCombinedFragment,
     isMessage,
     isPackage,
     isPackageMerge,
     isState,
     isStatePart,
     isTransition,
-    type Lifeline,
     type Message,
+    type MessageEnd,
     type Package,
     type StatePart,
     type Transition
@@ -79,6 +83,39 @@ function behaviorLabelOf(element: StatePart | Transition): string {
  */
 const BEHAVIOR_LABEL_PROPERTIES = new Set<string>(['name', ...BEHAVIOR_LABEL_PARTS]);
 
+/** Containment properties whose `+` writes an element nothing draws - see `withoutDeadContainmentProperties`. */
+const DEAD_CONTAINMENT_PROPERTIES = new Set<string>(['useCases']);
+
+/**
+ * Containment properties left off one element's panel, by the type of the element the panel is for.
+ *
+ * A lifeline's three: the bars, the cross and the conditions drawn on its line. All are placed by dropping
+ * them on the line, which is what says *when* each of them is - the one thing they are about.
+ *
+ * An interaction's three, for the same reason and one more. A lifeline and a message are drawn on the frame
+ * by being dropped on it, and where they land is what they say; added from here they arrive at whatever the
+ * create handler defaults to. And a lifeline dropped on the frame is stored as a flat `diagram.entities`
+ * sibling of it (see `FLAT_CONTAINER_TYPES`) while one added from here goes into `Interaction.lifelines` -
+ * both are drawn, so the `+` quietly put lifelines somewhere else in the file than the canvas does.
+ *
+ * A gate has no `+` to lose: it is not placed and then aimed at but made *by* aiming a message, dropping
+ * the end on the frame's border (see `createImplicitGates`), which is why it has no tool palette entry
+ * either. The list was the only place one could be conjured without a message to justify it.
+ */
+const HIDDEN_CONTAINMENT_PROPERTIES: Record<string, Set<string>> = {
+    Lifeline: new Set<string>(['executions', 'destructions', 'stateInvariants']),
+    Interaction: new Set<string>(['lifelines', 'messages', 'formalGates'])
+};
+
+const EMPTY: ReadonlySet<string> = new Set<string>();
+
+/**
+ * The two bounds the single loop field stands in for. Everything else a combined fragment carries - its
+ * operator, the messages an `ignore` names, its operands - is a property in its own right and stays as
+ * generated.
+ */
+const LOOP_BOUNDS_PROPERTIES = new Set<string>(['loopMin', 'loopMax']);
+
 type PerDiagramHandler = new () => ActionHandler;
 
 const HANDLERS_BY_DIAGRAM_TYPE: Record<string, PerDiagramHandler> = {
@@ -88,6 +125,7 @@ const HANDLERS_BY_DIAGRAM_TYPE: Record<string, PerDiagramHandler> = {
     DEPLOYMENT: RequestDeploymentPropertyPaletteActionHandler,
     ACTIVITY: RequestActivityPropertyPaletteActionHandler,
     COMMUNICATION: RequestCommunicationPropertyPaletteActionHandler,
+    SEQUENCE: RequestSequencePropertyPaletteActionHandler,
     STATE_MACHINE: RequestStateMachinePropertyPaletteActionHandler,
     INFORMATION_FLOW: RequestInformationFlowPropertyPaletteActionHandler
 };
@@ -120,8 +158,14 @@ export class RequestPropertyPaletteActionHandler implements ActionHandler {
                 this.withMergedPackagesProperty(
                     this.withLinkMessagesProperty(
                         this.withOrientationProperty(
-                            this.asBehaviorLabelPalette(
-                                this.withComposedPartLabels(this.withoutDeadContainmentProperties(a), action.elementId),
+                            this.asLoopBoundsPalette(
+                                this.asBehaviorLabelPalette(
+                                    this.withComposedPartLabels(
+                                        this.withoutDeadContainmentProperties(a, action.elementId),
+                                        action.elementId
+                                    ),
+                                    action.elementId
+                                ),
                                 action.elementId
                             ),
                             action.elementId
@@ -186,6 +230,12 @@ export class RequestPropertyPaletteActionHandler implements ActionHandler {
         if (!SetPropertyPaletteAction.is(action) || !action.palette?.items || !elementId) {
             return action;
         }
+        // Only where the notation draws that shared connector. A sequence diagram draws each message as
+        // its own arrow at its own height, so there is no link there for messages to be *on* - the list
+        // would be describing a line the reader cannot see.
+        if (this.modelState.diagramType !== 'COMMUNICATION') {
+            return action;
+        }
         const element = this.modelState.index.findIdElement(elementId);
         if (!isMessage(element)) {
             return action;
@@ -198,8 +248,8 @@ export class RequestPropertyPaletteActionHandler implements ActionHandler {
         }
 
         const messageType = this.languageMetadata.convertToElementType('Message');
-        const addMessage = (from: Lifeline, to: Lifeline) => ({
-            label: `Add Message: ${lifelineLabel(from)} → ${lifelineLabel(to)}`,
+        const addMessage = (from: MessageEnd, to: MessageEnd) => ({
+            label: `Add Message: ${messageEndLabel(from)} → ${messageEndLabel(to)}`,
             // `CreateEdgeOperation` names the two ends outright. Arming the edge creation tool, which is
             // how the tool palette and the containers' create buttons make a relation, would ask for
             // them to be picked on the canvas - and they are the two ends we already have.
@@ -231,7 +281,7 @@ export class RequestPropertyPaletteActionHandler implements ActionHandler {
                             // here can be named here too: a new one is created unnamed, and its name is
                             // what carries the sequence number a communication diagram is read by.
                             name: message.name ?? '',
-                            hint: `${lifelineLabel(message.source?.ref)} → ${lifelineLabel(message.target?.ref)}`,
+                            hint: `${messageEndLabel(message.source?.ref)} → ${messageEndLabel(message.target?.ref)}`,
                             deleteActions: [DeleteElementOperation.create([message.__id])]
                         })),
                         // Both ways round, because which way a message runs is the whole of what its
@@ -360,6 +410,59 @@ export class RequestPropertyPaletteActionHandler implements ActionHandler {
     }
 
     /**
+     * A combined fragment's two loop bounds offered as the one field they are drawn as - `2,5`, `3`, `*`
+     * or `1,*`, exactly what stands between the parentheses of the tag on its corner.
+     *
+     * They are stored as two properties and have to be, because the comma between them has no terminal in
+     * the model grammar and a stored `2,5` would come back as `25` (see {@link LOOP_BOUNDS_PROPERTY_ID}).
+     * That is a fact about the file rather than about the notation, though: `loop(2,5)` is one thing a
+     * reader says, and a Loop Min beside a Loop Max asks them to take it apart themselves and to guess
+     * which of the two a bare `*` belongs in. The field is taken apart again on the way in by
+     * `GenericUpdateOperationHandler`, under a property id that is a property of nothing.
+     *
+     * Offered whatever the operator is, as the two fields were. A fragment retyped away from `loop` keeps
+     * its bounds and stops drawing them, and says them again if it is retyped back - so a reader may fill
+     * them in before choosing the operator, and the field that shows them has to be there to fill in.
+     */
+    protected asLoopBoundsPalette(action: any, elementId?: string): any {
+        if (!SetPropertyPaletteAction.is(action) || !action.palette?.items || !elementId) {
+            return action;
+        }
+        const element = this.modelState.index.findIdElement(elementId);
+        if (!isCombinedFragment(element)) {
+            return action;
+        }
+
+        // One field in the place of the first of the two, so it lands where Loop Min was rather than after
+        // everything else the fragment carries.
+        const items: any[] = [];
+        let written = false;
+        for (const item of action.palette.items) {
+            if (!LOOP_BOUNDS_PROPERTIES.has(item.propertyId)) {
+                items.push(item);
+                continue;
+            }
+            if (written) {
+                continue;
+            }
+            written = true;
+            items.push(
+                TextProperty({
+                    elementId,
+                    propertyId: LOOP_BOUNDS_PROPERTY_ID,
+                    // What the tag says between its parentheses, so the panel and the diagram read alike.
+                    // Empty where the fragment has neither bound, which is the loop that runs on its guard
+                    // alone - and is what the reader is being offered somewhere to write.
+                    text: composeLoopBounds(element.loopMin, element.loopMax) ?? '',
+                    label: 'Loop Bounds'
+                })
+            );
+        }
+
+        return { ...action, palette: { ...action.palette, items } };
+    }
+
+    /**
      * The parts listed on a state, each under the line it is drawn as rather than under its `name` -
      * which is what the generated list shows, and which a part only carries until the first edit.
      * Without this every part typed into reads as `(unnamed state_part)` in the list it was created
@@ -403,36 +506,59 @@ export class RequestPropertyPaletteActionHandler implements ActionHandler {
     }
 
     /**
-     * Containment properties the palette generates a list and a `+` for, which nothing on the canvas
-     * could show the result of. Offering them is worse than offering nothing: the element is written
-     * into the file, and there it stays, listed nowhere and selectable by nothing.
+     * Containment properties the palette should not offer a list and a `+` for.
      *
-     * - A subject's `useCases`, because a use case only ever renders as a flat `diagram.entities`
-     *   sibling positioned by canvas overlap, never as a child of the subject that contains it.
+     * Two different reasons, which is why the two are kept apart below.
+     *
+     * {@link DEAD_CONTAINMENT_PROPERTIES} is about a `+` whose result nothing on the canvas could show.
+     * Offering one is worse than offering nothing: the element is written into the file, and there it
+     * stays, listed nowhere and selectable by nothing. A subject's `useCases` is the case - a use case only
+     * ever renders as a flat `diagram.entities` sibling positioned by canvas overlap, never as a child of
+     * the subject containing it.
+     *
+     * {@link HIDDEN_CONTAINMENT_PROPERTIES} is about a `+` that works and is not wanted: the marks drawn on
+     * a lifeline are placed by dragging them onto its line from the tool palette, which is where they get a
+     * position worth having. Added from the panel they land at whatever the create handler defaults to,
+     * which is the same spot every time - so the list mostly served to pile marks on top of one another.
+     * They are still created, moved and deleted on the canvas, and each still has a property panel of its
+     * own once it is selected.
      *
      * Removed here rather than in the generated handlers, which are written from the definitions and
      * would lose the exclusion on the next regeneration.
      */
-    protected withoutDeadContainmentProperties(action: any): any {
+    protected withoutDeadContainmentProperties(action: any, elementId?: string): any {
         if (!SetPropertyPaletteAction.is(action) || !action.palette?.items) {
             return action;
         }
 
-        const hidden = new Set<string>(['useCases']);
+        const element = elementId ? this.modelState.index.findIdElement(elementId) : undefined;
+        // By element type and not by property name alone: `executions` is a lifeline's bars *and* the bars
+        // nested inside one of them, and the nested list is the way a nested bar is added - see
+        // `BehaviorExecutionSpecification.executions`.
+        const hiddenHere = element ? (HIDDEN_CONTAINMENT_PROPERTIES[element.$type] ?? EMPTY) : EMPTY;
 
         return {
             ...action,
             palette: {
                 ...action.palette,
-                items: action.palette.items.filter((item: any) => !hidden.has(item.propertyId))
+                items: action.palette.items.filter(
+                    (item: any) => !DEAD_CONTAINMENT_PROPERTIES.has(item.propertyId) && !hiddenHere.has(item.propertyId)
+                )
             }
         };
     }
 }
 
-/** A lifeline as it reads in the direction of a message; unnamed ones still have to be told apart. */
-function lifelineLabel(lifeline: Lifeline | undefined): string {
-    return lifeline?.name?.trim() || '(unnamed lifeline)';
+/**
+ * An end of a message as it reads in the direction that message runs; unnamed ones still have to be told
+ * apart.
+ *
+ * A `MessageEnd` rather than a lifeline, because a message can also end on a gate. Only the communication
+ * notation reaches this - and that one draws no gates - but the type is what the model says, and narrowing
+ * it here would only move the cast somewhere less obvious.
+ */
+function messageEndLabel(end: MessageEnd | undefined): string {
+    return end?.name?.trim() || '(unnamed lifeline)';
 }
 
 /**

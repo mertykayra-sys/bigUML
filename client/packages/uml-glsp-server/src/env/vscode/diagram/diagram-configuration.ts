@@ -17,10 +17,13 @@ import {
     ActivityDiagramNodeTypes,
     ClassDiagramNodeTypes,
     CommonModelTypes,
+    CommunicationDiagramEdgeTypes,
     CommunicationDiagramNodeTypes,
     DeploymentDiagramNodeTypes,
     InformationFlowDiagramNodeTypes,
     PackageDiagramNodeTypes,
+    SequenceDiagramEdgeTypes,
+    SequenceDiagramNodeTypes,
     StateMachineDiagramNodeTypes,
     UseCaseDiagramNodeTypes
 } from '@borkdominik-biguml/uml-glsp-server';
@@ -50,6 +53,7 @@ export class UmlDiagramConfiguration implements DiagramConfiguration {
         mapping.set(CommonModelTypes.COMP_HEADER, GCompartment);
         mapping.set(CommonModelTypes.COMP_STATE_REGION, GCompartment);
         mapping.set(CommonModelTypes.COMP_STATE_PARTS, GCompartment);
+        mapping.set(CommonModelTypes.COMP_INTERACTION_OPERAND, GCompartment);
         mapping.set(CommonModelTypes.LABEL_ICON, GLabel);
         mapping.set(CommonModelTypes.ICON, GCompartment);
         mapping.set(ClassDiagramNodeTypes.CLASS, GClassNode);
@@ -312,6 +316,146 @@ export class UmlDiagramConfiguration implements DiagramConfiguration {
                 // `GenericCreateNodeOperationHandler.FLAT_CONTAINER_TYPES`).
                 containableElementTypeIds: [CommunicationDiagramNodeTypes.LIFELINE]
             },
+            // The interaction frame of a sequence diagram, and the lifelines standing on it. Both are
+            // resizable, and both have to be: a frame is the boundary the whole interaction is drawn
+            // inside, and a lifeline is a head with a line running down from it - how far down is how
+            // long the object lives, which is the one thing about a lifeline there is to drag.
+            {
+                elementTypeId: SequenceDiagramNodeTypes.INTERACTION,
+                repositionable: true,
+                deletable: true,
+                resizable: true,
+                reparentable: false,
+                // As on the communication diagram: the frame is drawn around the whole diagram, so the
+                // lifelines must stay creatable on top of it (they are added as flat siblings, see
+                // `GenericCreateNodeOperationHandler.FLAT_CONTAINER_TYPES`).
+                containableElementTypeIds: [
+                    SequenceDiagramNodeTypes.LIFELINE,
+                    SequenceDiagramNodeTypes.GATE,
+                    SequenceDiagramNodeTypes.COMBINED_FRAGMENT
+                ]
+            },
+            {
+                elementTypeId: SequenceDiagramNodeTypes.LIFELINE,
+                repositionable: true,
+                deletable: true,
+                resizable: true,
+                reparentable: false,
+                // A lifeline holds what is drawn on its line. Without naming them here the client refuses
+                // the drop and lets it fall through to the canvas, which would land the shape beside the
+                // line as a node of its own - where it is stored is already settled by `getCreationPath`,
+                // which puts it in the lifeline's own containment.
+                containableElementTypeIds: [
+                    SequenceDiagramNodeTypes.BEHAVIOR_EXECUTION_SPECIFICATION,
+                    SequenceDiagramNodeTypes.DESTRUCTION_OCCURRENCE_SPECIFICATION,
+                    SequenceDiagramNodeTypes.STATE_INVARIANT
+                ]
+            },
+            // The bar itself. Resizable, because how far it reaches is how long the participant is busy;
+            // repositionable, because where it starts is when. Only down the page counts either way - the
+            // bar is centred on its lifeline's line whatever the drag says about across (see
+            // `executionBounds`), so a sideways move simply springs back on the next redraw.
+            {
+                elementTypeId: SequenceDiagramNodeTypes.BEHAVIOR_EXECUTION_SPECIFICATION,
+                repositionable: true,
+                deletable: true,
+                resizable: true,
+                reparentable: false,
+                // A bar holds the bars nested inside it - what the participant started doing while it was
+                // already busy, which is what a call to itself leaves behind. Without naming it here the
+                // client refuses the drop and lets it fall through to the lifeline underneath, which makes
+                // a second bar beside the first instead of one inside it.
+                containableElementTypeIds: [SequenceDiagramNodeTypes.BEHAVIOR_EXECUTION_SPECIFICATION]
+            },
+            // The `ref` box. Both, because it is drawn across the lifelines it covers: which participants
+            // take part is where it is and how wide it is, so it is dragged and stretched like any box.
+            // Nothing is containable - it stands for an interaction drawn elsewhere, and holds no shapes.
+            {
+                elementTypeId: SequenceDiagramNodeTypes.INTERACTION_USE,
+                repositionable: true,
+                deletable: true,
+                resizable: true,
+                reparentable: false,
+                // The gates on its border. Without naming them here the client refuses the drop and lets it
+                // fall through to the canvas, which would land the mark beside the box as a node of its
+                // own - where it is stored is already settled by `getCreationPath`, which puts it in
+                // `InteractionUse.actualGates`.
+                containableElementTypeIds: [SequenceDiagramNodeTypes.GATE]
+            },
+            // A combined fragment. Both, and for the same reason the `ref` box above is: the box is drawn
+            // across the lifelines and messages it encloses, so which stretch of the interaction it is
+            // about is where it is and how big it is.
+            {
+                elementTypeId: SequenceDiagramNodeTypes.COMBINED_FRAGMENT,
+                repositionable: true,
+                deletable: true,
+                resizable: true,
+                reparentable: false,
+                // What may be drawn inside it. They are contained by lying within its bounds rather than by
+                // being nested in it (see `FLAT_CONTAINER_TYPES`), but the client refuses a drop onto a
+                // shape that does not name the type at all - so a fragment that named nothing could not be
+                // drawn around anything, which is the whole of what it is for. A fragment is in the list
+                // itself: UML nests them, and an `opt` inside a `par` is an ordinary thing to draw.
+                containableElementTypeIds: [
+                    SequenceDiagramNodeTypes.LIFELINE,
+                    SequenceDiagramNodeTypes.COMBINED_FRAGMENT,
+                    SequenceDiagramNodeTypes.INTERACTION_USE,
+                    SequenceDiagramNodeTypes.BEHAVIOR_EXECUTION_SPECIFICATION,
+                    SequenceDiagramNodeTypes.STATE_INVARIANT,
+                    SequenceDiagramNodeTypes.DURATION_CONSTRAINT,
+                    SequenceDiagramNodeTypes.NOTE,
+                    SequenceDiagramNodeTypes.TEXT_LABEL
+                ]
+            },
+            // A duration constraint. Both, and the height is the point of it: the shape spans the stretch
+            // of time being constrained, so stretching it is how that stretch is said. Nothing is
+            // containable - it is an arrow and a line of text, and holds no shapes.
+            {
+                elementTypeId: SequenceDiagramNodeTypes.DURATION_CONSTRAINT,
+                repositionable: true,
+                deletable: true,
+                resizable: true,
+                reparentable: false,
+                containableElementTypeIds: []
+            },
+            // A gate. Repositionable, because where it sits on the border is *where* the message crosses -
+            // the whole of what it says, and the thing to drag when the message is to be aimed somewhere
+            // else. Not resizable: it is a mark drawn at a fixed size (see `gateBounds`), and handles on
+            // one would offer a drag that springs back on the next redraw. A drag that lands off the border
+            // is snapped back onto it rather than refused, so the mark can be slid around the frame freely.
+            {
+                elementTypeId: SequenceDiagramNodeTypes.GATE,
+                repositionable: true,
+                deletable: true,
+                resizable: false,
+                reparentable: false,
+                containableElementTypeIds: []
+            },
+            // The cross where a participant's life ends. Repositionable, because where it sits on the line
+            // is *when* the object dies - the whole of what it says. Not resizable: a mark is drawn at a
+            // fixed size (see `destructionBounds`), and handles on one would offer a drag that springs
+            // back on the next redraw.
+            {
+                elementTypeId: SequenceDiagramNodeTypes.DESTRUCTION_OCCURRENCE_SPECIFICATION,
+                repositionable: true,
+                deletable: true,
+                resizable: false,
+                reparentable: false,
+                containableElementTypeIds: []
+            },
+            // A condition on the participant at one point of its life. Repositionable, because where it
+            // sits on the line is *when* it has to hold; resizable, because what is written in it is an
+            // expression of any length and the width is how much of it fits on a line. Only down the page
+            // counts of a move - the shape is centred on its lifeline's line whatever the drag says about
+            // across (see `stateInvariantBounds`), so a sideways one springs back on the next redraw.
+            {
+                elementTypeId: SequenceDiagramNodeTypes.STATE_INVARIANT,
+                repositionable: true,
+                deletable: true,
+                resizable: true,
+                reparentable: false,
+                containableElementTypeIds: []
+            },
             {
                 elementTypeId: UseCaseDiagramNodeTypes.SUBJECT,
                 repositionable: true,
@@ -402,6 +546,7 @@ export class UmlDiagramConfiguration implements DiagramConfiguration {
                 DeploymentDiagramNodeTypes.NOTE,
                 InformationFlowDiagramNodeTypes.NOTE,
                 PackageDiagramNodeTypes.NOTE,
+                SequenceDiagramNodeTypes.NOTE,
                 StateMachineDiagramNodeTypes.NOTE,
                 UseCaseDiagramNodeTypes.NOTE,
                 ActivityDiagramNodeTypes.TEXT_LABEL,
@@ -410,6 +555,7 @@ export class UmlDiagramConfiguration implements DiagramConfiguration {
                 DeploymentDiagramNodeTypes.TEXT_LABEL,
                 InformationFlowDiagramNodeTypes.TEXT_LABEL,
                 PackageDiagramNodeTypes.TEXT_LABEL,
+                SequenceDiagramNodeTypes.TEXT_LABEL,
                 StateMachineDiagramNodeTypes.TEXT_LABEL,
                 UseCaseDiagramNodeTypes.TEXT_LABEL
             ].map(elementTypeId => ({
@@ -435,13 +581,68 @@ export class UmlDiagramConfiguration implements DiagramConfiguration {
     }
 
     get edgeTypeHints(): EdgeTypeHint[] {
-        return [createDefaultEdgeTypeHint(DefaultTypes.EDGE)];
+        return [
+            createDefaultEdgeTypeHint(DefaultTypes.EDGE),
+            // A message runs between the things a message can end on, and nothing else. Named here so the
+            // client knows: without a hint every node is a valid end, which let a message be drawn to a
+            // state invariant or a note. Nothing refused it - the reference was written, the file was
+            // saved, and the message came back pointing at something no `MessageEnd` rule could resolve.
+            //
+            // Naming them also turns the two clicks into something the reader can see: the valid ends light
+            // up while the tool is armed, which is the answer to *where* a message may be connected.
+            {
+                elementTypeId: SequenceDiagramEdgeTypes.MESSAGE,
+                repositionable: true,
+                deletable: true,
+                routable: true,
+                sourceElementTypeIds: SEQUENCE_MESSAGE_ENDS,
+                targetElementTypeIds: SEQUENCE_MESSAGE_ENDS
+            },
+            // The communication notation draws no frames a message can cross and no gates to cross them at,
+            // so its messages run between lifelines and nothing else.
+            {
+                elementTypeId: CommunicationDiagramEdgeTypes.MESSAGE,
+                repositionable: true,
+                deletable: true,
+                routable: true,
+                sourceElementTypeIds: [CommunicationDiagramNodeTypes.LIFELINE],
+                targetElementTypeIds: [CommunicationDiagramNodeTypes.LIFELINE]
+            }
+        ];
     }
 
     layoutKind = ServerLayoutKind.MANUAL;
     needsClientLayout = true;
     animatedUpdate = true;
 }
+
+/**
+ * What a sequence message may be dropped on.
+ *
+ * Wider than what it may end on, because all but the first two are read back to something else the moment
+ * they are dropped on - each of them being what the user was pointing at rather than what the model can
+ * hold.
+ *
+ * A frame becomes a gate: the server puts one at the point of the border that was dropped on and ends the
+ * message there (see `GenericCreateEdgeOperationHandler.createImplicitGates`), which is the gate the user
+ * would otherwise have had to place first.
+ *
+ * An execution bar and the cross where a participant's life ends both become the lifeline they are on: a
+ * message ends on a participant at a moment, and this model has no occurrences for that moment to be (see
+ * `GenericCreateEdgeOperationHandler.onLifeline`). The arrow still lands on the mark, which the anchor sees
+ * to on its own - and the cross has to be droppable for the obvious reason that a delete message is drawn
+ * pointing straight at it.
+ *
+ * So only the first two are ever named in a saved file. The rest are here for the drop.
+ */
+const SEQUENCE_MESSAGE_ENDS = [
+    SequenceDiagramNodeTypes.LIFELINE,
+    SequenceDiagramNodeTypes.GATE,
+    SequenceDiagramNodeTypes.BEHAVIOR_EXECUTION_SPECIFICATION,
+    SequenceDiagramNodeTypes.DESTRUCTION_OCCURRENCE_SPECIFICATION,
+    SequenceDiagramNodeTypes.INTERACTION,
+    SequenceDiagramNodeTypes.INTERACTION_USE
+];
 
 export function createDefaultShapeTypeHint(elementId: string): ShapeTypeHint {
     return {

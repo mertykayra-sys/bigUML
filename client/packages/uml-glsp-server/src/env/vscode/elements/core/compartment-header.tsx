@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  **********************************************************************************/
 
-import { CommonModelTypes } from '@borkdominik-biguml/uml-glsp-server';
+import { CommonModelTypes, STEREOTYPE_LABEL_SUFFIX, stereotypeText } from '@borkdominik-biguml/uml-glsp-server';
 import { GCompartmentElement, GLabelElement } from '@borkdominik-biguml/uml-glsp-server/jsx';
 import { DefaultTypes } from '@eclipse-glsp/protocol';
 import type { GModelElement } from '@eclipse-glsp/server';
@@ -17,6 +17,17 @@ export interface CompartmentHeaderProps {
     name: string;
     stereotype?: string;
     stereotypeCssClasses?: string[];
+    /**
+     * Whether the line in guillemets is the element's own to change, rather than the keyword its metaclass
+     * writes. Set it only where the element has a `stereotype` property in the grammar to write back to:
+     * the id this gives the label is what `GenericLabelEditOperationHandler` reads to tell a retyped
+     * stereotype from a retyped name, and an element with nowhere to put one would have the word stored as
+     * its name instead.
+     *
+     * Off by default, because most of these keywords are not a matter of opinion - an `«interface»` that
+     * says something else is not an interface, and the shape would be lying about what it is.
+     */
+    stereotypeEditable?: boolean;
     isAbstract?: boolean;
     /**
      * Writes a name of several words over several lines, one word per line, instead of on a single
@@ -27,7 +38,7 @@ export interface CompartmentHeaderProps {
 }
 
 export function CompartmentHeader(props: CompartmentHeaderProps): GModelElement {
-    const { id, name, stereotype, stereotypeCssClasses, isAbstract, wrapName } = props;
+    const { id, name, stereotype, stereotypeCssClasses, stereotypeEditable, isAbstract, wrapName } = props;
 
     const nameLabelCssClasses = ['uml-font-bold'];
     if (isAbstract) {
@@ -43,9 +54,12 @@ export function CompartmentHeader(props: CompartmentHeaderProps): GModelElement 
         >
             {stereotype && (
                 <GLabelElement
-                    id={id + '_annotation_label'}
-                    type={CommonModelTypes.LABEL_TEXT}
-                    text={`<<${stereotype}>>`}
+                    // The id says which property a retyped line belongs to, and the type says whether it can
+                    // be retyped at all: an editable one is the same label a lifeline and a message write
+                    // their stereotype on, and a fixed one is an annotation with nothing behind it.
+                    id={stereotypeEditable ? id + STEREOTYPE_LABEL_SUFFIX : id + '_annotation_label'}
+                    type={stereotypeEditable ? CommonModelTypes.LABEL_NAME : CommonModelTypes.LABEL_TEXT}
+                    text={stereotypeText(stereotype)}
                     cssClasses={stereotypeCssClasses}
                 />
             )}

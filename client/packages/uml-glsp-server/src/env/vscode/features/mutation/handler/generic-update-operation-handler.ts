@@ -13,15 +13,20 @@ import {
     storableText,
     behaviorLabelPatch,
     type BehaviorLabelElement,
+    LOOP_BOUNDS_PROPERTY_ID,
+    loopBoundsPatch,
+    loopBoundsSeedPatch,
+    LOOP_INTERACTION_OPERATOR,
     ORIENTATION_PROPERTY_ID,
     storedOrientationDefaultSize,
     turnableDefaultSize,
     UpdateOperation
 } from '@borkdominik-biguml/uml-glsp-server';
-import { hasOptionalName } from '@borkdominik-biguml/uml-glsp-server/gen/vscode';
-import { isNote, isStatePart, isTextLabel } from '@borkdominik-biguml/uml-model-server/grammar';
+import { hasOptionalName, hasTextName, isTextProperty } from '@borkdominik-biguml/uml-glsp-server/gen/vscode';
+import { isCombinedFragment, isNote, isStatePart, isTextLabel } from '@borkdominik-biguml/uml-model-server/grammar';
 import { type Command, OperationHandler } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
+import { isAstNode } from 'langium';
 import { URI } from 'vscode-uri';
 import { ModelPatchCommand } from '../../command/model-patch-command.js';
 import { type DiagramModelState } from '../../model/diagram-model-state.js';
@@ -63,6 +68,19 @@ export class GenericUpdateOperationHandler extends OperationHandler {
             return patch.length > 0 ? patch : undefined;
         }
 
+        if (operation.property === LOOP_BOUNDS_PROPERTY_ID) {
+            // The palette offers a loop's two bounds as the one field they are drawn between the
+            // parentheses as, so what comes back is `2,5` or `*` and not a property of anything - see
+            // `LOOP_BOUNDS_PROPERTY_ID`. Taken apart into the two properties they are stored as, which is
+            // the only shape the grammar can hold them in: it has no terminal for the comma.
+            const basePath = element ? this.modelState.index.findPath(operation.elementId) : undefined;
+            if (!basePath || !isCombinedFragment(element)) {
+                return undefined;
+            }
+            const patch = loopBoundsPatch(basePath, element, String(operation.value ?? ''));
+            return patch.length > 0 ? patch : undefined;
+        }
+
         if (operation.property === ORIENTATION_PROPERTY_ID) {
             // Turning one of these is not a property of the element but a swap of its bounds - see
             // `ORIENTATION_PROPERTY_ID`, which the palette offers without any property to back it.
@@ -78,6 +96,18 @@ export class GenericUpdateOperationHandler extends OperationHandler {
             if (storedSize) {
                 const written = this.createUpdatePatch(operation);
                 return [...(written ? [written] : []), ...(this.turnPatch(operation, storedSize) ?? [])];
+            }
+        }
+
+        if (operation.property === 'interactionOperator' && operation.value === LOOP_INTERACTION_OPERATOR) {
+            // Picking `loop` writes the operator and, where the fragment has no bounds of its own, the
+            // prompt they are shown as: the tag reads `loop(0,0)` from that moment, so the shape of what
+            // goes between the parentheses is on the diagram rather than left to be guessed at. See
+            // `LOOP_BOUNDS_PLACEHOLDER`. A fragment that already carries bounds keeps them.
+            const basePath = element ? this.modelState.index.findPath(operation.elementId) : undefined;
+            const written = this.createUpdatePatch(operation);
+            if (basePath && written && isCombinedFragment(element)) {
+                return [written, ...loopBoundsSeedPatch(basePath, element)];
             }
         }
 
@@ -203,8 +233,17 @@ export class GenericUpdateOperationHandler extends OperationHandler {
         if (value.endsWith('_refValue')) {
             return value;
         }
+
+        // Which filter anything typed here goes through is a question about the grammar, so the grammar is
+        // asked: `isTextProperty` and `hasTextName` are generated from the definitions, so the rule a value
+        // is read back with and the filter it is written through cannot drift apart.
+        const astType = isAstNode(element) ? element.$type : undefined;
+
         if (property === 'name') {
-            return storableName(value);
+            // A name read as free text keeps everything that rule can lex - a message is labelled with the
+            // operation it calls, so `validate()` keeps its pair and `login(usr, pwd)` keeps its comma,
+            // neither of which `storableName` can hold.
+            return astType && hasTextName(astType) ? storableProse(value) : storableName(value);
         }
         // The body of a note or a free label is prose and keeps its punctuation, brackets included -
         // every other text property is notation of some fixed shape, where a bracket that arrives is one
@@ -212,7 +251,20 @@ export class GenericUpdateOperationHandler extends OperationHandler {
         if ((isNote(element) || isTextLabel(element)) && property === 'body') {
             return storableProse(value);
         }
-        return storableText(value);
+        // The messages an `ignore` or a `consider` names are a list, and the comma between them is the one
+        // character `storableText` cannot keep - it strips the six that JSON is structured with, notation
+        // and separator alike. `ignore {tick, log}` filtered that way says `{tick log}`, which is one
+        // message with a space in its name. The braces around the list are notation and are put on to be
+        // drawn (see `interactionOperatorTag`), so what is stored here is the list and nothing else.
+        if (isCombinedFragment(element) && property === 'messages') {
+            return storableProse(value);
+        }
+
+        // And everything else is held to the rule its own property is parsed with. A property the grammar
+        // reads as a name takes what a name takes and no more: `storableText` for all of them let a `.` or
+        // a `(` into a stereotype, which is not refused anywhere - it is written to the file, and the file
+        // then never opens again. A `.` typed into a message's stereotype is what found that.
+        return astType && !isTextProperty(astType, property) ? storableName(value) : storableText(value);
     }
 
     /** choose between 'add' and 'replace' (default: always 'replace'). */

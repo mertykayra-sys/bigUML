@@ -31,6 +31,19 @@ export namespace MessagePropertyPaletteHandler {
                         choice={context.semanticElement.visibility!}
                         label='Visibility'
                     />
+                    <ChoiceProperty
+                        elementId={context.semanticElement.__id}
+                        propertyId='messageSort'
+                        choices={PropertyPaletteChoices.MESSAGE_SORT}
+                        choice={context.semanticElement.messageSort!}
+                        label='Message Sort'
+                    />
+                    <TextProperty
+                        elementId={context.semanticElement.__id}
+                        propertyId='stereotype'
+                        text={context.semanticElement.stereotype!}
+                        label='Stereotype'
+                    />
                 </PropertyPalette>
             )
         ];

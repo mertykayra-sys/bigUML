@@ -30,15 +30,40 @@
     stroke-width: 3;
 }
 
+/*
+ * The dots on a selected edge: one at each end, and one at the middle of each segment that adds a bend
+ * when it is dragged. On a sequence diagram they are how a message is moved at all, so they have to be
+ * possible to hit.
+ *
+ * The dot is the fill; the stroke is a band of slack around it, transparent but still painted - which
+ * takes pointer events without being drawn, the same trick `.uml-hit-area` uses for a shape whose ink is
+ * too thin to aim at. GLSP draws these at a radius of five, which the old two-pixel ring brought to a
+ * six-pixel target, and a diagram is usually read zoomed out far enough to make that a few pixels on the
+ * screen. The band doubles what can be aimed at without changing what is drawn.
+ *
+ * `r` belongs in the stylesheet for the reason GLSP puts it there: it is a presentation attribute, so a
+ * rule here outranks the radius the view renders and is the only way to set it from CSS at all.
+ */
 .uml-edge > .sprotty-routing-handle {
+    r: 6px;
     fill: var(--uml-edge);
-    stroke: var(--uml-edge);
-    stroke-width: 2;
+    stroke: transparent;
+    stroke-width: 12;
     z-index: 1000;
 }
 
+/*
+ * Under the pointer the dot grows, rather than being ringed the way GLSP rings it.
+ *
+ * The ring is a stroke and the stroke is the slack here, so painting it would put a twelve-pixel halo
+ * round the dot - and narrowing it back to a ring would shrink the target at the very moment the pointer
+ * has found it, which is when it is least wanted. Both properties are repeated rather than inherited,
+ * because GLSP's own hover rule names the same two and is the more specific of the two selectors.
+ */
 .uml-edge > .sprotty-routing-handle.mouseover {
-    stroke-width: 3;
+    r: 8px;
+    stroke: transparent;
+    stroke-width: 12;
 }
 
 .uml-edge-dashed {

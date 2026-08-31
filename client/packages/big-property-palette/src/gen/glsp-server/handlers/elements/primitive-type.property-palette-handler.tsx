@@ -18,6 +18,12 @@ export namespace PrimitiveTypePropertyPaletteHandler {
                         text={context.semanticElement.name!}
                         label='Name'
                     />
+                    <TextProperty
+                        elementId={context.semanticElement.__id}
+                        propertyId='stereotype'
+                        text={context.semanticElement.stereotype!}
+                        label='Stereotype'
+                    />
                 </PropertyPalette>
             )
         ];

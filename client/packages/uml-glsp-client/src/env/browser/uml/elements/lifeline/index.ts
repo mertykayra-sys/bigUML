@@ -6,4 +6,5 @@
  *
  * SPDX-License-Identifier: MIT
  *********************************************************************************/
+export * from './boundary-icon.view.js';
 export * from './lifeline.element.js';

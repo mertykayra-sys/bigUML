@@ -36,6 +36,18 @@ export function getEmptyDiagram(diagramType: string) {
                 },
                 metaInfos: []
             };
+        case 'sequence':
+            return {
+                $type: 'Diagram' as const,
+                diagram: {
+                    $type: 'SequenceDiagram' as const,
+                    __id: `diagram_${uuid.v4()}`,
+                    diagramType: 'SEQUENCE' as const,
+                    entities: [],
+                    relations: []
+                },
+                metaInfos: []
+            };
         case 'package':
             return {
                 $type: 'Diagram' as const,

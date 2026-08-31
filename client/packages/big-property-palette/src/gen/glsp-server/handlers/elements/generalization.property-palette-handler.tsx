@@ -16,7 +16,7 @@ export namespace GeneralizationPropertyPaletteHandler {
                         elementId={context.semanticElement.__id}
                         propertyId='isSubstitutable'
                         value={!!context.semanticElement.isSubstitutable}
-                        label='isSubstitutable'
+                        label='Is Substitutable'
                     />
                 </PropertyPalette>
             )

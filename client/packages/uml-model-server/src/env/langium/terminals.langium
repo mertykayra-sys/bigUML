@@ -39,20 +39,27 @@ hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 // an escape to anything else that opens the file. Everything else can - see `storableProse`.
 LangiumText returns string: (LANGIUM_ID | LANGIUM_INT | LANGIUM_BOOL | LANGIUM_PUNCT | LANGIUM_SLASH | '[' | ']' | '{' | '}' | ',' | ':')+;
 
-// What a name can hold, which is an identifier plus the brackets and the braces.
+// What a name can hold: an identifier, the brackets and the braces, and the `:` and `/` that UML writes
+// into a name rather than beside it.
 //
 // A name is not prose - a `.` or a `(` in one is notation, and notation has a property of its own to go
-// in - but a bracket is not notation of any one thing. `[ok]`, `{abstract}` and `List[T]` are all
-// written into names, and the name is the only field there is to write them in. They are taken as
-// keywords here for the same reason `LangiumText` takes them, and with the same bound: only between the
-// quotes of a value, where the `"` that closes it is the one character not in the list.
+// in - but not every mark is notation of one thing. `[ok]`, `{abstract}` and `List[T]` are all written
+// into names, and the name is the only field there is to write them in. The colon is there for the same
+// reason and more plainly: a lifeline is named `customer : Customer` and an instance `order : Order`, so
+// the colon is part of how the thing is called, not a separator between two properties. The slash goes
+// with it - a qualified or derived name (`ui/main`, `/total`) is one name and has one field.
+//
+// The colon and the brackets are taken as keywords, for the same reason `LangiumText` takes them and
+// with the same bound: only between the quotes of a value, where the `"` that closes it is the one
+// character not in the list. The slash has a terminal already (`LANGIUM_SLASH`), which is what keeps it
+// clear of the comment terminals.
 //
 // The number and the boolean are in here because they are what a lexer without parser context makes of
 // a name that reads as one: `1` lexes as `LANGIUM_INT` however it was written, so a name of `1` could
 // not be read back at all while a name was one `LANGIUM_ID` - it was stored, since a digit is a word
 // character, and the file then failed to open. As alternatives of a rule the parser resolves, both are
 // simply part of the name.
-LangiumName returns string: (LANGIUM_ID | LANGIUM_INT | LANGIUM_BOOL | '[' | ']' | '{' | '}')+;
+LangiumName returns string: (LANGIUM_ID | LANGIUM_INT | LANGIUM_BOOL | LANGIUM_SLASH | '[' | ']' | '{' | '}' | ':')+;
 
 // Rules for skipping unknown/unsupported JSON fields during parsing.
 // Unknown fields are silently consumed so that files with extra properties

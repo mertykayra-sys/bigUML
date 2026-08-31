@@ -15,6 +15,10 @@ import {
     isSize,
     Position,
     isPosition,
+    RoutePoint,
+    isRoutePoint,
+    Route,
+    isRoute,
     Subject,
     isSubject,
     TextLabel,
@@ -67,6 +71,30 @@ import {
     isDeepHistory,
     Choice,
     isChoice,
+    SequenceDiagram,
+    isSequenceDiagram,
+    StateInvariant,
+    isStateInvariant,
+    Message,
+    isMessage,
+    Lifeline,
+    isLifeline,
+    DestructionOccurrenceSpecification,
+    isDestructionOccurrenceSpecification,
+    BehaviorExecutionSpecification,
+    isBehaviorExecutionSpecification,
+    InteractionUse,
+    isInteractionUse,
+    Gate,
+    isGate,
+    InteractionOperand,
+    isInteractionOperand,
+    Interaction,
+    isInteraction,
+    DurationConstraint,
+    isDurationConstraint,
+    CombinedFragment,
+    isCombinedFragment,
     PackageDiagram,
     isPackageDiagram,
     Usage,
@@ -117,12 +145,6 @@ import {
     isCommunicationPath,
     CommunicationDiagram,
     isCommunicationDiagram,
-    Message,
-    isMessage,
-    Lifeline,
-    isLifeline,
-    Interaction,
-    isInteraction,
     ClassDiagram,
     isClassDiagram,
     Substitution,
@@ -193,6 +215,10 @@ import {
     isUseCaseDiagramEdges,
     Visibility,
     isVisibility,
+    Orientation,
+    isOrientation,
+    FrameFill,
+    isFrameFill,
     TransitionKind,
     isTransitionKind,
     ConnectionPoint,
@@ -205,6 +231,20 @@ import {
     isStateMachineDiagramNodes,
     StateMachineDiagramEdges,
     isStateMachineDiagramEdges,
+    SequenceDiagramElements,
+    isSequenceDiagramElements,
+    SequenceDiagramNodes,
+    isSequenceDiagramNodes,
+    SequenceDiagramEdges,
+    isSequenceDiagramEdges,
+    StateInvariantNotation,
+    isStateInvariantNotation,
+    MessageSort,
+    isMessageSort,
+    LifelineHead,
+    isLifelineHead,
+    InteractionOperator,
+    isInteractionOperator,
     PackageDiagramElements,
     isPackageDiagramElements,
     PackageDiagramNodes,
@@ -251,14 +291,14 @@ import {
     isActivityDiagramNodes,
     ActivityDiagramEdges,
     isActivityDiagramEdges,
-    Orientation,
-    isOrientation,
     Element,
     isElement,
     ElementWithSizeAndPosition,
     isElementWithSizeAndPosition,
     Node,
     isNode,
+    MessageEnd,
+    isMessageEnd,
     Edge,
     isEdge,
     Unbounded,
@@ -361,6 +401,42 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
                 '"element": ' +
                     '{' +
                     ' "__type": "Reference", "__refType": "ElementWithSizeAndPosition", "__value": "' +
+                    (element.element.ref?.__id ?? (element.element.$refText || 'undefined')) +
+                    '"}'
+            );
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeRoutePoint(element: RoutePoint): string {
+        let str: Array<string> = [];
+        str.push('"__type": "RoutePoint"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.x !== undefined && element.x !== null) {
+            str.push('"x": ' + element.x + '');
+        }
+        if (element.y !== undefined && element.y !== null) {
+            str.push('"y": ' + element.y + '');
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeRoute(element: Route): string {
+        let str: Array<string> = [];
+        str.push('"__type": "Route"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.points !== undefined && element.points !== null) {
+            str.push('"points": [' + element.points.map(property => this.serializeRoutePoint(property)).join(',') + ']');
+        }
+        if (element.element !== undefined && element.element !== null) {
+            str.push(
+                '"element": ' +
+                    '{' +
+                    ' "__type": "Reference", "__refType": "Edge", "__value": "' +
                     (element.element.ref?.__id ?? (element.element.$refText || 'undefined')) +
                     '"}'
             );
@@ -996,6 +1072,296 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         }
         if (element.visibility !== undefined && element.visibility !== null) {
             str.push('"visibility": ' + this.serializeVisibility(element.visibility));
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeSequenceDiagram(element: SequenceDiagram): string {
+        let str: Array<string> = [];
+        str.push('"__type": "SequenceDiagram"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.diagramType !== undefined && element.diagramType !== null) {
+            str.push('"diagramType": ' + '"' + element.diagramType + '"');
+        }
+        if (element.entities !== undefined && element.entities !== null) {
+            str.push('"entities": [' + element.entities.map(property => this.serializeSequenceDiagramNodes(property)).join(',') + ']');
+        }
+        if (element.relations !== undefined && element.relations !== null) {
+            str.push('"relations": [' + element.relations.map(property => this.serializeSequenceDiagramEdges(property)).join(',') + ']');
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeStateInvariant(element: StateInvariant): string {
+        let str: Array<string> = [];
+        str.push('"__type": "StateInvariant"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.invariant !== undefined && element.invariant !== null) {
+            str.push('"invariant": ' + '"' + element.invariant + '"');
+        }
+        if (element.notation !== undefined && element.notation !== null) {
+            str.push('"notation": ' + this.serializeStateInvariantNotation(element.notation));
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeMessage(element: Message): string {
+        let str: Array<string> = [];
+        str.push('"__type": "Message"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.name !== undefined && element.name !== null) {
+            str.push('"name": ' + '"' + element.name + '"');
+        }
+        if (element.visibility !== undefined && element.visibility !== null) {
+            str.push('"visibility": ' + this.serializeVisibility(element.visibility));
+        }
+        if (element.messageSort !== undefined && element.messageSort !== null) {
+            str.push('"messageSort": ' + this.serializeMessageSort(element.messageSort));
+        }
+        if (element.stereotype !== undefined && element.stereotype !== null) {
+            str.push('"stereotype": ' + '"' + element.stereotype + '"');
+        }
+        if (element.source !== undefined && element.source !== null) {
+            str.push(
+                '"source": ' +
+                    '{' +
+                    ' "__type": "Reference", "__refType": "MessageEnd", "__value": "' +
+                    (element.source.ref?.__id ?? (element.source.$refText || 'undefined')) +
+                    '"}'
+            );
+        }
+        if (element.target !== undefined && element.target !== null) {
+            str.push(
+                '"target": ' +
+                    '{' +
+                    ' "__type": "Reference", "__refType": "MessageEnd", "__value": "' +
+                    (element.target.ref?.__id ?? (element.target.$refText || 'undefined')) +
+                    '"}'
+            );
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeLifeline(element: Lifeline): string {
+        let str: Array<string> = [];
+        str.push('"__type": "Lifeline"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.name !== undefined && element.name !== null) {
+            str.push('"name": ' + '"' + element.name + '"');
+        }
+        if (element.selector !== undefined && element.selector !== null) {
+            str.push('"selector": ' + '"' + element.selector + '"');
+        }
+        if (element.className !== undefined && element.className !== null) {
+            str.push('"className": ' + '"' + element.className + '"');
+        }
+        if (element.decomposition !== undefined && element.decomposition !== null) {
+            str.push('"decomposition": ' + '"' + element.decomposition + '"');
+        }
+        if (element.visibility !== undefined && element.visibility !== null) {
+            str.push('"visibility": ' + this.serializeVisibility(element.visibility));
+        }
+        if (element.head !== undefined && element.head !== null) {
+            str.push('"head": ' + this.serializeLifelineHead(element.head));
+        }
+        if (element.isActive !== undefined && element.isActive !== null) {
+            str.push('"isActive": ' + element.isActive + '');
+        }
+        if (element.stereotype !== undefined && element.stereotype !== null) {
+            str.push('"stereotype": ' + '"' + element.stereotype + '"');
+        }
+        if (element.executions !== undefined && element.executions !== null) {
+            str.push(
+                '"executions": [' +
+                    element.executions.map(property => this.serializeBehaviorExecutionSpecification(property)).join(',') +
+                    ']'
+            );
+        }
+        if (element.destructions !== undefined && element.destructions !== null) {
+            str.push(
+                '"destructions": [' +
+                    element.destructions.map(property => this.serializeDestructionOccurrenceSpecification(property)).join(',') +
+                    ']'
+            );
+        }
+        if (element.stateInvariants !== undefined && element.stateInvariants !== null) {
+            str.push(
+                '"stateInvariants": [' + element.stateInvariants.map(property => this.serializeStateInvariant(property)).join(',') + ']'
+            );
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeDestructionOccurrenceSpecification(element: DestructionOccurrenceSpecification): string {
+        let str: Array<string> = [];
+        str.push('"__type": "DestructionOccurrenceSpecification"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.name !== undefined && element.name !== null) {
+            str.push('"name": ' + '"' + element.name + '"');
+        }
+        if (element.visibility !== undefined && element.visibility !== null) {
+            str.push('"visibility": ' + this.serializeVisibility(element.visibility));
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeBehaviorExecutionSpecification(element: BehaviorExecutionSpecification): string {
+        let str: Array<string> = [];
+        str.push('"__type": "BehaviorExecutionSpecification"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.name !== undefined && element.name !== null) {
+            str.push('"name": ' + '"' + element.name + '"');
+        }
+        if (element.visibility !== undefined && element.visibility !== null) {
+            str.push('"visibility": ' + this.serializeVisibility(element.visibility));
+        }
+        if (element.executions !== undefined && element.executions !== null) {
+            str.push(
+                '"executions": [' +
+                    element.executions.map(property => this.serializeBehaviorExecutionSpecification(property)).join(',') +
+                    ']'
+            );
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeInteractionUse(element: InteractionUse): string {
+        let str: Array<string> = [];
+        str.push('"__type": "InteractionUse"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.keyword !== undefined && element.keyword !== null) {
+            str.push('"keyword": ' + '"' + element.keyword + '"');
+        }
+        if (element.attributeName !== undefined && element.attributeName !== null) {
+            str.push('"attributeName": ' + '"' + element.attributeName + '"');
+        }
+        if (element.collaborationUse !== undefined && element.collaborationUse !== null) {
+            str.push('"collaborationUse": ' + '"' + element.collaborationUse + '"');
+        }
+        if (element.refersTo !== undefined && element.refersTo !== null) {
+            str.push('"refersTo": ' + '"' + element.refersTo + '"');
+        }
+        if (element.arguments !== undefined && element.arguments !== null) {
+            str.push('"arguments": ' + '"' + element.arguments + '"');
+        }
+        if (element.returnValue !== undefined && element.returnValue !== null) {
+            str.push('"returnValue": ' + '"' + element.returnValue + '"');
+        }
+        if (element.actualGates !== undefined && element.actualGates !== null) {
+            str.push('"actualGates": [' + element.actualGates.map(property => this.serializeGate(property)).join(',') + ']');
+        }
+        if (element.fill !== undefined && element.fill !== null) {
+            str.push('"fill": ' + this.serializeFrameFill(element.fill));
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeGate(element: Gate): string {
+        let str: Array<string> = [];
+        str.push('"__type": "Gate"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.name !== undefined && element.name !== null) {
+            str.push('"name": ' + '"' + element.name + '"');
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeInteractionOperand(element: InteractionOperand): string {
+        let str: Array<string> = [];
+        str.push('"__type": "InteractionOperand"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.name !== undefined && element.name !== null) {
+            str.push('"name": ' + '"' + element.name + '"');
+        }
+        if (element.guard !== undefined && element.guard !== null) {
+            str.push('"guard": ' + '"' + element.guard + '"');
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeInteraction(element: Interaction): string {
+        let str: Array<string> = [];
+        str.push('"__type": "Interaction"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.name !== undefined && element.name !== null) {
+            str.push('"name": ' + '"' + element.name + '"');
+        }
+        if (element.visibility !== undefined && element.visibility !== null) {
+            str.push('"visibility": ' + this.serializeVisibility(element.visibility));
+        }
+        if (element.lifelines !== undefined && element.lifelines !== null) {
+            str.push('"lifelines": [' + element.lifelines.map(property => this.serializeLifeline(property)).join(',') + ']');
+        }
+        if (element.messages !== undefined && element.messages !== null) {
+            str.push('"messages": [' + element.messages.map(property => this.serializeMessage(property)).join(',') + ']');
+        }
+        if (element.formalGates !== undefined && element.formalGates !== null) {
+            str.push('"formalGates": [' + element.formalGates.map(property => this.serializeGate(property)).join(',') + ']');
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeDurationConstraint(element: DurationConstraint): string {
+        let str: Array<string> = [];
+        str.push('"__type": "DurationConstraint"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.specification !== undefined && element.specification !== null) {
+            str.push('"specification": ' + '"' + element.specification + '"');
+        }
+        if (element.orientation !== undefined && element.orientation !== null) {
+            str.push('"orientation": ' + this.serializeOrientation(element.orientation));
+        }
+        return '{' + str.join(',\n') + '}';
+    }
+
+    serializeCombinedFragment(element: CombinedFragment): string {
+        let str: Array<string> = [];
+        str.push('"__type": "CombinedFragment"');
+        if (element.__id !== undefined && element.__id !== null) {
+            str.push('"__id": ' + '"' + element.__id + '"');
+        }
+        if (element.name !== undefined && element.name !== null) {
+            str.push('"name": ' + '"' + element.name + '"');
+        }
+        if (element.interactionOperator !== undefined && element.interactionOperator !== null) {
+            str.push('"interactionOperator": ' + this.serializeInteractionOperator(element.interactionOperator));
+        }
+        if (element.loopMin !== undefined && element.loopMin !== null) {
+            str.push('"loopMin": ' + '"' + element.loopMin + '"');
+        }
+        if (element.loopMax !== undefined && element.loopMax !== null) {
+            str.push('"loopMax": ' + '"' + element.loopMax + '"');
+        }
+        if (element.messages !== undefined && element.messages !== null) {
+            str.push('"messages": ' + '"' + element.messages + '"');
+        }
+        if (element.operands !== undefined && element.operands !== null) {
+            str.push('"operands": [' + element.operands.map(property => this.serializeInteractionOperand(property)).join(',') + ']');
+        }
+        if (element.fill !== undefined && element.fill !== null) {
+            str.push('"fill": ' + this.serializeFrameFill(element.fill));
         }
         return '{' + str.join(',\n') + '}';
     }
@@ -1705,75 +2071,6 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         return '{' + str.join(',\n') + '}';
     }
 
-    serializeMessage(element: Message): string {
-        let str: Array<string> = [];
-        str.push('"__type": "Message"');
-        if (element.__id !== undefined && element.__id !== null) {
-            str.push('"__id": ' + '"' + element.__id + '"');
-        }
-        if (element.name !== undefined && element.name !== null) {
-            str.push('"name": ' + '"' + element.name + '"');
-        }
-        if (element.visibility !== undefined && element.visibility !== null) {
-            str.push('"visibility": ' + this.serializeVisibility(element.visibility));
-        }
-        if (element.source !== undefined && element.source !== null) {
-            str.push(
-                '"source": ' +
-                    '{' +
-                    ' "__type": "Reference", "__refType": "Lifeline", "__value": "' +
-                    (element.source.ref?.__id ?? (element.source.$refText || 'undefined')) +
-                    '"}'
-            );
-        }
-        if (element.target !== undefined && element.target !== null) {
-            str.push(
-                '"target": ' +
-                    '{' +
-                    ' "__type": "Reference", "__refType": "Lifeline", "__value": "' +
-                    (element.target.ref?.__id ?? (element.target.$refText || 'undefined')) +
-                    '"}'
-            );
-        }
-        return '{' + str.join(',\n') + '}';
-    }
-
-    serializeLifeline(element: Lifeline): string {
-        let str: Array<string> = [];
-        str.push('"__type": "Lifeline"');
-        if (element.__id !== undefined && element.__id !== null) {
-            str.push('"__id": ' + '"' + element.__id + '"');
-        }
-        if (element.name !== undefined && element.name !== null) {
-            str.push('"name": ' + '"' + element.name + '"');
-        }
-        if (element.visibility !== undefined && element.visibility !== null) {
-            str.push('"visibility": ' + this.serializeVisibility(element.visibility));
-        }
-        return '{' + str.join(',\n') + '}';
-    }
-
-    serializeInteraction(element: Interaction): string {
-        let str: Array<string> = [];
-        str.push('"__type": "Interaction"');
-        if (element.__id !== undefined && element.__id !== null) {
-            str.push('"__id": ' + '"' + element.__id + '"');
-        }
-        if (element.name !== undefined && element.name !== null) {
-            str.push('"name": ' + '"' + element.name + '"');
-        }
-        if (element.visibility !== undefined && element.visibility !== null) {
-            str.push('"visibility": ' + this.serializeVisibility(element.visibility));
-        }
-        if (element.lifelines !== undefined && element.lifelines !== null) {
-            str.push('"lifelines": [' + element.lifelines.map(property => this.serializeLifeline(property)).join(',') + ']');
-        }
-        if (element.messages !== undefined && element.messages !== null) {
-            str.push('"messages": [' + element.messages.map(property => this.serializeMessage(property)).join(',') + ']');
-        }
-        return '{' + str.join(',\n') + '}';
-    }
-
     serializeClassDiagram(element: ClassDiagram): string {
         let str: Array<string> = [];
         str.push('"__type": "ClassDiagram"');
@@ -1923,6 +2220,9 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         }
         if (element.name !== undefined && element.name !== null) {
             str.push('"name": ' + '"' + element.name + '"');
+        }
+        if (element.stereotype !== undefined && element.stereotype !== null) {
+            str.push('"stereotype": ' + '"' + element.stereotype + '"');
         }
         return '{' + str.join(',\n') + '}';
     }
@@ -2397,6 +2697,9 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         if (isPackageDiagram(element)) {
             return this.serializePackageDiagram(element);
         }
+        if (isSequenceDiagram(element)) {
+            return this.serializeSequenceDiagram(element);
+        }
         if (isStateMachineDiagram(element)) {
             return this.serializeStateMachineDiagram(element);
         }
@@ -2448,6 +2751,14 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
     }
 
     serializeVisibility(element: Visibility): any {
+        return '"' + element + '"';
+    }
+
+    serializeOrientation(element: Orientation): any {
+        return '"' + element + '"';
+    }
+
+    serializeFrameFill(element: FrameFill): any {
         return '"' + element + '"';
     }
 
@@ -2527,6 +2838,76 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         if (isTransition(element)) {
             return this.serializeTransition(element);
         }
+    }
+
+    serializeSequenceDiagramElements(element: SequenceDiagramElements): any {
+        if (isSequenceDiagramNodes(element)) {
+            return this.serializeSequenceDiagramNodes(element);
+        }
+        if (isSequenceDiagramEdges(element)) {
+            return this.serializeSequenceDiagramEdges(element);
+        }
+    }
+
+    serializeSequenceDiagramNodes(element: SequenceDiagramNodes): any {
+        if (isInteraction(element)) {
+            return this.serializeInteraction(element);
+        }
+        if (isInteractionUse(element)) {
+            return this.serializeInteractionUse(element);
+        }
+        if (isCombinedFragment(element)) {
+            return this.serializeCombinedFragment(element);
+        }
+        if (isInteractionOperand(element)) {
+            return this.serializeInteractionOperand(element);
+        }
+        if (isLifeline(element)) {
+            return this.serializeLifeline(element);
+        }
+        if (isBehaviorExecutionSpecification(element)) {
+            return this.serializeBehaviorExecutionSpecification(element);
+        }
+        if (isDestructionOccurrenceSpecification(element)) {
+            return this.serializeDestructionOccurrenceSpecification(element);
+        }
+        if (isStateInvariant(element)) {
+            return this.serializeStateInvariant(element);
+        }
+        if (isDurationConstraint(element)) {
+            return this.serializeDurationConstraint(element);
+        }
+        if (isGate(element)) {
+            return this.serializeGate(element);
+        }
+        if (isNote(element)) {
+            return this.serializeNote(element);
+        }
+        if (isTextLabel(element)) {
+            return this.serializeTextLabel(element);
+        }
+    }
+
+    serializeSequenceDiagramEdges(element: SequenceDiagramEdges): any {
+        if (isMessage(element)) {
+            return this.serializeMessage(element);
+        }
+    }
+
+    serializeStateInvariantNotation(element: StateInvariantNotation): any {
+        return '"' + element + '"';
+    }
+
+    serializeMessageSort(element: MessageSort): any {
+        return '"' + element + '"';
+    }
+
+    serializeLifelineHead(element: LifelineHead): any {
+        return '"' + element + '"';
+    }
+
+    serializeInteractionOperator(element: InteractionOperator): any {
+        return '"' + element + '"';
     }
 
     serializePackageDiagramElements(element: PackageDiagramElements): any {
@@ -2931,10 +3312,6 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         }
     }
 
-    serializeOrientation(element: Orientation): any {
-        return '"' + element + '"';
-    }
-
     serializeElement(element: Element): any {
         if (isElementWithSizeAndPosition(element)) {
             return this.serializeElementWithSizeAndPosition(element);
@@ -2956,6 +3333,9 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
     serializeNode(element: Node): any {
         if (isUseCase(element)) {
             return this.serializeUseCase(element);
+        }
+        if (isMessageEnd(element)) {
+            return this.serializeMessageEnd(element);
         }
         if (isSubject(element)) {
             return this.serializeSubject(element);
@@ -3008,6 +3388,27 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         if (isChoice(element)) {
             return this.serializeChoice(element);
         }
+        if (isStateInvariant(element)) {
+            return this.serializeStateInvariant(element);
+        }
+        if (isDestructionOccurrenceSpecification(element)) {
+            return this.serializeDestructionOccurrenceSpecification(element);
+        }
+        if (isBehaviorExecutionSpecification(element)) {
+            return this.serializeBehaviorExecutionSpecification(element);
+        }
+        if (isInteractionUse(element)) {
+            return this.serializeInteractionUse(element);
+        }
+        if (isInteraction(element)) {
+            return this.serializeInteraction(element);
+        }
+        if (isDurationConstraint(element)) {
+            return this.serializeDurationConstraint(element);
+        }
+        if (isCombinedFragment(element)) {
+            return this.serializeCombinedFragment(element);
+        }
         if (isPackage(element)) {
             return this.serializePackage(element);
         }
@@ -3037,12 +3438,6 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         }
         if (isDeploymentModel(element)) {
             return this.serializeDeploymentModel(element);
-        }
-        if (isLifeline(element)) {
-            return this.serializeLifeline(element);
-        }
-        if (isInteraction(element)) {
-            return this.serializeInteraction(element);
         }
         if (isInterface(element)) {
             return this.serializeInterface(element);
@@ -3103,6 +3498,15 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         }
     }
 
+    serializeMessageEnd(element: MessageEnd): any {
+        if (isLifeline(element)) {
+            return this.serializeLifeline(element);
+        }
+        if (isGate(element)) {
+            return this.serializeGate(element);
+        }
+    }
+
     serializeEdge(element: Edge): any {
         if (isRelation(element)) {
             return this.serializeRelation(element);
@@ -3110,11 +3514,11 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         if (isTransition(element)) {
             return this.serializeTransition(element);
         }
-        if (isInformationFlow(element)) {
-            return this.serializeInformationFlow(element);
-        }
         if (isMessage(element)) {
             return this.serializeMessage(element);
+        }
+        if (isInformationFlow(element)) {
+            return this.serializeInformationFlow(element);
         }
         if (isControlFlow(element)) {
             return this.serializeControlFlow(element);
@@ -3127,6 +3531,9 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         }
         if (isStatePart(element)) {
             return this.serializeStatePart(element);
+        }
+        if (isInteractionOperand(element)) {
+            return this.serializeInteractionOperand(element);
         }
         if (isParameter(element)) {
             return this.serializeParameter(element);
@@ -3154,6 +3561,9 @@ export class UmlDiagramSerializer implements Serializer<Diagram>, DiagramSeriali
         }
         if (isPosition(element)) {
             return this.serializePosition(element);
+        }
+        if (isRoute(element)) {
+            return this.serializeRoute(element);
         }
     }
 

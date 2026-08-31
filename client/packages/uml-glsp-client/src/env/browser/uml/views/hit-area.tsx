@@ -24,8 +24,14 @@ import { type VNode } from 'snabbdom';
  * they carry no stroke or fill of their own beyond that - see `uml-hit-area` and `uml-hit-stroke`.
  */
 
-/** How much slack a click is given around a shape's ink, in pixels on each side. */
-export const HIT_SLACK = 8;
+/**
+ * How much slack a click is given around a shape's ink, in pixels on each side.
+ *
+ * Matched to the band an edge is given (`DEFAULT_EDGE_PADDING`), so that a line and a thin shape ask the
+ * same of the pointer - a diagram where the arrows are easier to hit than the marks they run between
+ * reads as one where the marks are broken.
+ */
+export const HIT_SLACK = 10;
 
 /**
  * A band of slack along the outline of a box, for a shape that is an outline around nothing.

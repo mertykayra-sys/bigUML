@@ -37,6 +37,35 @@ export function hasOptionalName(astType: string): boolean {
 }
 
 /**
+ * The properties each AST type is parsed with `LangiumText` rather than `LangiumName` - the ones marked
+ * `@Language.text` in the definitions, its supertypes' included.
+ *
+ * The distinction is what the property is allowed to hold, and it is not a matter of taste: `LangiumName`
+ * has no terminal for a `(`, a `.`, a `,` or an `=`, so a value carrying one is not refused - it is
+ * written to the file, and the next read of that file fails. Every value typed into an element goes
+ * through the filter this picks (see `storableName`, `storableText`, `storableProse`), which is why the
+ * answer is generated from the definitions rather than kept by hand beside them.
+ */
+export const textPropertyMap: Record<string, string[]> = <%~ JSON.stringify(it.textProperties, null, 2) %>;
+
+/**
+ * Whether this property of this AST type is read as free text, and so may keep the punctuation a name may
+ * not. Everything else on it is a name and is held to what a name can hold.
+ */
+export function isTextProperty(astType: string, property: string): boolean {
+    return textPropertyMap[stripPrefix(astType)]?.includes(property) ?? false;
+}
+
+/**
+ * Whether this AST type's *name* is one of those - a message, labelled with the operation it calls, and
+ * the two elements labelled `trigger [guard] / effect`. The question is asked often enough on its own to
+ * be worth a name.
+ */
+export function hasTextName(astType: string): boolean {
+    return isTextProperty(astType, 'name');
+}
+
+/**
  * The AST types that carry no name at all - a note, which is the text it holds and has nothing else to
  * be called.
  *

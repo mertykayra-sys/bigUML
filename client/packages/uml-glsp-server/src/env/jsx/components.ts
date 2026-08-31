@@ -163,6 +163,10 @@ export interface GEdgeElementProps {
  * for an edge that asks for one, and eleven of the twenty relations here never did. Set for every edge
  * rather than per relation so that none of them can be left out again, and overridden by any that says
  * otherwise in its own `args`.
+ *
+ * It takes both ends to work. This is only the width; the band itself is drawn by `GEdgeView`, and an
+ * edge registered on the client with the plain sprotty `PolylineEdgeView` gets none however wide it asks
+ * for - which is how the same eleven relations went on being one pixel wide after this was set for them.
  */
 export const DEFAULT_EDGE_PADDING = 10;
 

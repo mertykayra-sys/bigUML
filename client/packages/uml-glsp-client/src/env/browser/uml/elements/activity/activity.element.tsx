@@ -10,8 +10,12 @@ import { type GNode } from '@eclipse-glsp/client';
 import { injectable } from 'inversify';
 import { RoundedNodeView } from '../../views/rounded-node.view.js';
 import { NamedElement } from '../named-element/index.js';
+import { staysBehindFeature } from '../../../features/zorder/stays-behind.js';
 
-export class GActivityNode extends NamedElement {}
+export class GActivityNode extends NamedElement {
+    /** A frame - the frame an activity’s flow is drawn inside - is drawn behind them and must stay there. */
+    static override readonly DEFAULT_FEATURES = [...super.DEFAULT_FEATURES, staysBehindFeature];
+}
 
 /** How far the corners of the activity frame are taken off. */
 const FRAME_CORNER_RADIUS = 20;

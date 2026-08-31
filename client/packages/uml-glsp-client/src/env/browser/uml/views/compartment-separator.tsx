@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  *********************************************************************************/
 /** @jsx svg */
-import { type BoundsAware, GCompartment, type GParentElement, hasArgs, svg } from '@eclipse-glsp/client';
+import { type ArgsAware, type BoundsAware, GCompartment, type GParentElement, svg } from '@eclipse-glsp/client';
 import { DefaultTypes } from '@eclipse-glsp/protocol';
 import { type VNode } from 'snabbdom';
 
@@ -21,15 +21,22 @@ import { type VNode } from 'snabbdom';
  * end that knows whether a compartment starts a new section or continues one.
  */
 
-/** The compartments asking to be separated from whatever is drawn above them. */
+/**
+ * The compartments asking to be separated from whatever is drawn above them.
+ *
+ * The arg is read straight off the compartment rather than through `hasArgs`, which gates on an
+ * `argsFeature` that no compartment class here declares - the plain one GLSP registers has it no more than
+ * the UML ones do (see `SCompartmentImpl.DEFAULT_FEATURES`). Asked that way this found nothing, ever, and
+ * no rule was drawn between a class and its attributes or between the regions of an orthogonal state,
+ * however plainly the server had marked them. `outsideLabel` reads its own arg for the same reason.
+ */
 function separatedCompartments(element: GParentElement): GCompartment[] {
     return element.children.filter(
         (child): child is GCompartment =>
             child instanceof GCompartment &&
             child.type !== DefaultTypes.COMPARTMENT_HEADER &&
             child.children.length > 0 &&
-            hasArgs(child) &&
-            child.args['divider'] === true
+            (child as Partial<ArgsAware>).args?.['divider'] === true
     );
 }
 
@@ -62,7 +69,7 @@ export function renderCompartmentSeparators(element: GParentElement & BoundsAwar
             return (
                 <path
                     class-uml-comp-separator
-                    class-uml-comp-separator-dashed={hasArgs(compartment) && compartment.args['dashed'] === true}
+                    class-uml-comp-separator-dashed={(compartment as Partial<ArgsAware>).args?.['dashed'] === true}
                     d={`M ${inset},${y}  L ${width - inset},${y}`}
                 ></path>
             ) as any;

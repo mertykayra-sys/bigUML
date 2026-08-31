@@ -14,7 +14,7 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
     Diagram: [
         {
             property: 'metaInfos',
-            allowedChildTypes: ['Size', 'Position']
+            allowedChildTypes: ['Size', 'Position', 'Route']
         }
     ],
     UseCaseDiagram: [
@@ -25,6 +25,12 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
         {
             property: 'relations',
             allowedChildTypes: ['UseCaseDiagramEdges']
+        }
+    ],
+    Route: [
+        {
+            property: 'points',
+            allowedChildTypes: ['RoutePoint']
         }
     ],
     Subject: [
@@ -54,6 +60,7 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
             property: 'subvertices',
             allowedChildTypes: [
                 'UseCase',
+                'MessageEnd',
                 'Subject',
                 'TextLabel',
                 'Note',
@@ -71,6 +78,13 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'EntryPoint',
                 'DeepHistory',
                 'Choice',
+                'StateInvariant',
+                'DestructionOccurrenceSpecification',
+                'BehaviorExecutionSpecification',
+                'InteractionUse',
+                'Interaction',
+                'DurationConstraint',
+                'CombinedFragment',
                 'Package',
                 'Operation',
                 'Class',
@@ -81,8 +95,6 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'DeploymentNode',
                 'DeploymentPackage',
                 'DeploymentModel',
-                'Lifeline',
-                'Interaction',
                 'Interface',
                 'PrimitiveType',
                 'InstanceSpecification',
@@ -119,6 +131,62 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
             allowedChildTypes: ['Region']
         }
     ],
+    SequenceDiagram: [
+        {
+            property: 'entities',
+            allowedChildTypes: ['SequenceDiagramNodes']
+        },
+        {
+            property: 'relations',
+            allowedChildTypes: ['SequenceDiagramEdges']
+        }
+    ],
+    Lifeline: [
+        {
+            property: 'executions',
+            allowedChildTypes: ['BehaviorExecutionSpecification']
+        },
+        {
+            property: 'destructions',
+            allowedChildTypes: ['DestructionOccurrenceSpecification']
+        },
+        {
+            property: 'stateInvariants',
+            allowedChildTypes: ['StateInvariant']
+        }
+    ],
+    BehaviorExecutionSpecification: [
+        {
+            property: 'executions',
+            allowedChildTypes: ['BehaviorExecutionSpecification']
+        }
+    ],
+    InteractionUse: [
+        {
+            property: 'actualGates',
+            allowedChildTypes: ['Gate']
+        }
+    ],
+    Interaction: [
+        {
+            property: 'lifelines',
+            allowedChildTypes: ['Lifeline']
+        },
+        {
+            property: 'messages',
+            allowedChildTypes: ['Message']
+        },
+        {
+            property: 'formalGates',
+            allowedChildTypes: ['Gate']
+        }
+    ],
+    CombinedFragment: [
+        {
+            property: 'operands',
+            allowedChildTypes: ['InteractionOperand']
+        }
+    ],
     PackageDiagram: [
         {
             property: 'entities',
@@ -134,6 +202,7 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
             property: 'entities',
             allowedChildTypes: [
                 'UseCase',
+                'MessageEnd',
                 'Subject',
                 'TextLabel',
                 'Note',
@@ -151,6 +220,13 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'EntryPoint',
                 'DeepHistory',
                 'Choice',
+                'StateInvariant',
+                'DestructionOccurrenceSpecification',
+                'BehaviorExecutionSpecification',
+                'InteractionUse',
+                'Interaction',
+                'DurationConstraint',
+                'CombinedFragment',
                 'Package',
                 'Operation',
                 'Class',
@@ -161,8 +237,6 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'DeploymentNode',
                 'DeploymentPackage',
                 'DeploymentModel',
-                'Lifeline',
-                'Interaction',
                 'Interface',
                 'PrimitiveType',
                 'InstanceSpecification',
@@ -300,6 +374,7 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
             property: 'entities',
             allowedChildTypes: [
                 'UseCase',
+                'MessageEnd',
                 'Subject',
                 'TextLabel',
                 'Note',
@@ -317,6 +392,13 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'EntryPoint',
                 'DeepHistory',
                 'Choice',
+                'StateInvariant',
+                'DestructionOccurrenceSpecification',
+                'BehaviorExecutionSpecification',
+                'InteractionUse',
+                'Interaction',
+                'DurationConstraint',
+                'CombinedFragment',
                 'Package',
                 'Operation',
                 'Class',
@@ -327,8 +409,6 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'DeploymentNode',
                 'DeploymentPackage',
                 'DeploymentModel',
-                'Lifeline',
-                'Interaction',
                 'Interface',
                 'PrimitiveType',
                 'InstanceSpecification',
@@ -356,6 +436,7 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
             property: 'entities',
             allowedChildTypes: [
                 'UseCase',
+                'MessageEnd',
                 'Subject',
                 'TextLabel',
                 'Note',
@@ -373,6 +454,13 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'EntryPoint',
                 'DeepHistory',
                 'Choice',
+                'StateInvariant',
+                'DestructionOccurrenceSpecification',
+                'BehaviorExecutionSpecification',
+                'InteractionUse',
+                'Interaction',
+                'DurationConstraint',
+                'CombinedFragment',
                 'Package',
                 'Operation',
                 'Class',
@@ -383,8 +471,6 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'DeploymentNode',
                 'DeploymentPackage',
                 'DeploymentModel',
-                'Lifeline',
-                'Interaction',
                 'Interface',
                 'PrimitiveType',
                 'InstanceSpecification',
@@ -415,16 +501,6 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
         {
             property: 'relations',
             allowedChildTypes: ['CommunicationDiagramEdges']
-        }
-    ],
-    Interaction: [
-        {
-            property: 'lifelines',
-            allowedChildTypes: ['Lifeline']
-        },
-        {
-            property: 'messages',
-            allowedChildTypes: ['Message']
         }
     ],
     ClassDiagram: [
@@ -504,6 +580,7 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
             property: 'nodes',
             allowedChildTypes: [
                 'UseCase',
+                'MessageEnd',
                 'Subject',
                 'TextLabel',
                 'Note',
@@ -521,6 +598,13 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'EntryPoint',
                 'DeepHistory',
                 'Choice',
+                'StateInvariant',
+                'DestructionOccurrenceSpecification',
+                'BehaviorExecutionSpecification',
+                'InteractionUse',
+                'Interaction',
+                'DurationConstraint',
+                'CombinedFragment',
                 'Package',
                 'Operation',
                 'Class',
@@ -531,8 +615,6 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'DeploymentNode',
                 'DeploymentPackage',
                 'DeploymentModel',
-                'Lifeline',
-                'Interaction',
                 'Interface',
                 'PrimitiveType',
                 'InstanceSpecification',
@@ -564,6 +646,7 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
             property: 'nodes',
             allowedChildTypes: [
                 'UseCase',
+                'MessageEnd',
                 'Subject',
                 'TextLabel',
                 'Note',
@@ -581,6 +664,13 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'EntryPoint',
                 'DeepHistory',
                 'Choice',
+                'StateInvariant',
+                'DestructionOccurrenceSpecification',
+                'BehaviorExecutionSpecification',
+                'InteractionUse',
+                'Interaction',
+                'DurationConstraint',
+                'CombinedFragment',
                 'Package',
                 'Operation',
                 'Class',
@@ -591,8 +681,6 @@ const mapping: Record<string, Array<{ property: string; allowedChildTypes?: stri
                 'DeploymentNode',
                 'DeploymentPackage',
                 'DeploymentModel',
-                'Lifeline',
-                'Interaction',
                 'Interface',
                 'PrimitiveType',
                 'InstanceSpecification',

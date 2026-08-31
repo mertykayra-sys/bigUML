@@ -50,6 +50,7 @@ const defaultMapping: Record<string, DefaultMappingEntry[]> = {
     Element: [],
     ElementWithSizeAndPosition: [],
     Node: [],
+    MessageEnd: [],
     Edge: [],
     Unbounded: [],
     MetaInfo: [],
@@ -79,6 +80,22 @@ const defaultMapping: Record<string, DefaultMappingEntry[]> = {
         {
             property: 'element',
             propertyType: 'ElementWithSizeAndPosition'
+        }
+    ],
+    RoutePoint: [
+        {
+            property: 'x',
+            propertyType: 'number'
+        },
+        {
+            property: 'y',
+            propertyType: 'number'
+        }
+    ],
+    Route: [
+        {
+            property: 'element',
+            propertyType: 'Edge'
         }
     ],
     Subject: [
@@ -485,6 +502,239 @@ const defaultMapping: Record<string, DefaultMappingEntry[]> = {
         {
             property: 'visibility',
             propertyType: 'Visibility'
+        }
+    ],
+    SequenceDiagram: [
+        {
+            property: 'diagramType',
+            propertyType: '"SEQUENCE"'
+        },
+        {
+            property: 'entities',
+            propertyType: 'SequenceDiagramNodes'
+        },
+        {
+            property: 'relations',
+            propertyType: 'SequenceDiagramEdges'
+        }
+    ],
+    StateInvariant: [
+        {
+            property: 'invariant',
+            propertyType: 'string',
+            defaultValue: 'constraint'
+        },
+        {
+            property: 'notation',
+            propertyType: 'StateInvariantNotation',
+            defaultValue: 'CONSTRAINT'
+        }
+    ],
+    Message: [
+        {
+            property: 'name',
+            propertyType: 'string'
+        },
+        {
+            property: 'visibility',
+            propertyType: 'Visibility'
+        },
+        {
+            property: 'messageSort',
+            propertyType: 'MessageSort',
+            defaultValue: 'SYNCH_CALL'
+        },
+        {
+            property: 'stereotype',
+            propertyType: 'string'
+        },
+        {
+            property: 'source',
+            propertyType: 'MessageEnd'
+        },
+        {
+            property: 'target',
+            propertyType: 'MessageEnd'
+        }
+    ],
+    Lifeline: [
+        {
+            property: 'name',
+            propertyType: 'string'
+        },
+        {
+            property: 'selector',
+            propertyType: 'string'
+        },
+        {
+            property: 'className',
+            propertyType: 'string'
+        },
+        {
+            property: 'decomposition',
+            propertyType: 'string'
+        },
+        {
+            property: 'visibility',
+            propertyType: 'Visibility'
+        },
+        {
+            property: 'head',
+            propertyType: 'LifelineHead',
+            defaultValue: 'BOX'
+        },
+        {
+            property: 'isActive',
+            propertyType: 'boolean'
+        },
+        {
+            property: 'stereotype',
+            propertyType: 'string'
+        },
+        {
+            property: 'executions',
+            propertyType: 'BehaviorExecutionSpecification'
+        },
+        {
+            property: 'destructions',
+            propertyType: 'DestructionOccurrenceSpecification'
+        },
+        {
+            property: 'stateInvariants',
+            propertyType: 'StateInvariant'
+        }
+    ],
+    DestructionOccurrenceSpecification: [
+        {
+            property: 'name',
+            propertyType: 'string'
+        },
+        {
+            property: 'visibility',
+            propertyType: 'Visibility'
+        }
+    ],
+    BehaviorExecutionSpecification: [
+        {
+            property: 'name',
+            propertyType: 'string'
+        },
+        {
+            property: 'visibility',
+            propertyType: 'Visibility'
+        },
+        {
+            property: 'executions',
+            propertyType: 'BehaviorExecutionSpecification'
+        }
+    ],
+    InteractionUse: [
+        {
+            property: 'keyword',
+            propertyType: 'string'
+        },
+        {
+            property: 'attributeName',
+            propertyType: 'string'
+        },
+        {
+            property: 'collaborationUse',
+            propertyType: 'string'
+        },
+        {
+            property: 'refersTo',
+            propertyType: 'string',
+            defaultValue: 'Interaction'
+        },
+        {
+            property: 'arguments',
+            propertyType: 'string'
+        },
+        {
+            property: 'returnValue',
+            propertyType: 'string'
+        },
+        {
+            property: 'actualGates',
+            propertyType: 'Gate'
+        },
+        {
+            property: 'fill',
+            propertyType: 'FrameFill',
+            defaultValue: 'TRANSPARENT'
+        }
+    ],
+    Gate: [
+        {
+            property: 'name',
+            propertyType: 'string'
+        }
+    ],
+    InteractionOperand: [],
+    Interaction: [
+        {
+            property: 'name',
+            propertyType: 'string'
+        },
+        {
+            property: 'visibility',
+            propertyType: 'Visibility'
+        },
+        {
+            property: 'lifelines',
+            propertyType: 'Lifeline'
+        },
+        {
+            property: 'messages',
+            propertyType: 'Message'
+        },
+        {
+            property: 'formalGates',
+            propertyType: 'Gate'
+        }
+    ],
+    DurationConstraint: [
+        {
+            property: 'specification',
+            propertyType: 'string',
+            defaultValue: 'duration'
+        },
+        {
+            property: 'orientation',
+            propertyType: 'Orientation',
+            defaultValue: 'VERTICAL'
+        }
+    ],
+    CombinedFragment: [
+        {
+            property: 'name',
+            propertyType: 'string'
+        },
+        {
+            property: 'interactionOperator',
+            propertyType: 'InteractionOperator',
+            defaultValue: 'PAR'
+        },
+        {
+            property: 'loopMin',
+            propertyType: 'string'
+        },
+        {
+            property: 'loopMax',
+            propertyType: 'string'
+        },
+        {
+            property: 'messages',
+            propertyType: 'string'
+        },
+        {
+            property: 'operands',
+            propertyType: 'InteractionOperand'
+        },
+        {
+            property: 'fill',
+            propertyType: 'FrameFill',
+            defaultValue: 'TRANSPARENT'
         }
     ],
     PackageDiagram: [
@@ -978,52 +1228,6 @@ const defaultMapping: Record<string, DefaultMappingEntry[]> = {
             propertyType: 'CommunicationDiagramEdges'
         }
     ],
-    Message: [
-        {
-            property: 'name',
-            propertyType: 'string'
-        },
-        {
-            property: 'visibility',
-            propertyType: 'Visibility'
-        },
-        {
-            property: 'source',
-            propertyType: 'Lifeline'
-        },
-        {
-            property: 'target',
-            propertyType: 'Lifeline'
-        }
-    ],
-    Lifeline: [
-        {
-            property: 'name',
-            propertyType: 'string'
-        },
-        {
-            property: 'visibility',
-            propertyType: 'Visibility'
-        }
-    ],
-    Interaction: [
-        {
-            property: 'name',
-            propertyType: 'string'
-        },
-        {
-            property: 'visibility',
-            propertyType: 'Visibility'
-        },
-        {
-            property: 'lifelines',
-            propertyType: 'Lifeline'
-        },
-        {
-            property: 'messages',
-            propertyType: 'Message'
-        }
-    ],
     ClassDiagram: [
         {
             property: 'diagramType',
@@ -1112,6 +1316,10 @@ const defaultMapping: Record<string, DefaultMappingEntry[]> = {
     PrimitiveType: [
         {
             property: 'name',
+            propertyType: 'string'
+        },
+        {
+            property: 'stereotype',
             propertyType: 'string'
         }
     ],
@@ -1444,6 +1652,7 @@ const defaultMapping: Record<string, DefaultMappingEntry[]> = {
 export const noBoundsClasses = new Set<string>([
     'Property',
     'StatePart',
+    'InteractionOperand',
     'Parameter',
     'Slot',
     'LiteralSpecification',
@@ -1476,6 +1685,13 @@ export const optionalNameClasses = new Set<string>([
     'EntryPoint',
     'DeepHistory',
     'Choice',
+    'Message',
+    'Lifeline',
+    'DestructionOccurrenceSpecification',
+    'BehaviorExecutionSpecification',
+    'Gate',
+    'InteractionOperand',
+    'CombinedFragment',
     'Usage',
     'Dependency',
     'Abstraction',
@@ -1483,7 +1699,6 @@ export const optionalNameClasses = new Set<string>([
     'Manifestation',
     'Deployment',
     'CommunicationPath',
-    'Message',
     'Substitution',
     'Realization',
     'InterfaceRealization',
@@ -1503,6 +1718,51 @@ export function hasOptionalName(astType: string): boolean {
 }
 
 /**
+ * The properties each AST type is parsed with `LangiumText` rather than `LangiumName` - the ones marked
+ * `@Language.text` in the definitions, its supertypes' included.
+ *
+ * The distinction is what the property is allowed to hold, and it is not a matter of taste: `LangiumName`
+ * has no terminal for a `(`, a `.`, a `,` or an `=`, so a value carrying one is not refused - it is
+ * written to the file, and the next read of that file fails. Every value typed into an element goes
+ * through the filter this picks (see `storableName`, `storableText`, `storableProse`), which is why the
+ * answer is generated from the definitions rather than kept by hand beside them.
+ */
+export const textPropertyMap: Record<string, string[]> = {
+    TextLabel: ['body'],
+    Note: ['body'],
+    Association: ['sourceMultiplicity', 'targetMultiplicity', 'sourceModifiers', 'targetModifiers'],
+    Transition: ['name', 'trigger', 'guard', 'effect'],
+    Property: ['multiplicity', 'propertyType'],
+    StatePart: ['name', 'trigger', 'guard', 'effect'],
+    StateInvariant: ['invariant'],
+    Message: ['name'],
+    Lifeline: ['selector', 'className', 'decomposition'],
+    InteractionUse: ['attributeName', 'collaborationUse', 'refersTo', 'arguments', 'returnValue'],
+    InteractionOperand: ['guard'],
+    DurationConstraint: ['specification'],
+    CombinedFragment: ['loopMin', 'loopMax', 'messages'],
+    Parameter: ['parameterType', 'multiplicity'],
+    ControlFlow: ['guard']
+};
+
+/**
+ * Whether this property of this AST type is read as free text, and so may keep the punctuation a name may
+ * not. Everything else on it is a name and is held to what a name can hold.
+ */
+export function isTextProperty(astType: string, property: string): boolean {
+    return textPropertyMap[stripPrefix(astType)]?.includes(property) ?? false;
+}
+
+/**
+ * Whether this AST type's *name* is one of those - a message, labelled with the operation it calls, and
+ * the two elements labelled `trigger [guard] / effect`. The question is asked often enough on its own to
+ * be worth a name.
+ */
+export function hasTextName(astType: string): boolean {
+    return isTextProperty(astType, 'name');
+}
+
+/**
  * The AST types that carry no name at all - a note, which is the text it holds and has nothing else to
  * be called.
  *
@@ -1515,11 +1775,14 @@ export const unnamedClasses = new Set<string>([
     'Element',
     'ElementWithSizeAndPosition',
     'Node',
+    'MessageEnd',
     'Edge',
     'Unbounded',
     'MetaInfo',
     'Size',
     'Position',
+    'RoutePoint',
+    'Route',
     'TextLabel',
     'Note',
     'Include',
@@ -1527,6 +1790,10 @@ export const unnamedClasses = new Set<string>([
     'Generalization',
     'Extend',
     'StateMachineDiagram',
+    'SequenceDiagram',
+    'StateInvariant',
+    'InteractionUse',
+    'DurationConstraint',
     'PackageDiagram',
     'PackageMerge',
     'PackageImport',

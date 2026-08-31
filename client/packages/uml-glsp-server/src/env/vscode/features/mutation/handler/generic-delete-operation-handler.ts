@@ -123,12 +123,22 @@ export class GenericDeleteOperationHandler extends OperationHandler {
         return ops;
     }
 
+    /**
+     * Everything the layout holds about an element: where it was, how big it was, and - for an edge - the
+     * route it was dragged through.
+     *
+     * All of it has to go with the element. A metaInfo left behind names an element that is no longer
+     * there, and the reference goes out as the word `undefined` on the next write, after which the file
+     * does not parse.
+     */
     protected deleteSizeAndPosition(elementId: string): Array<{ op: 'remove'; path: string }> {
         const ops: Array<{ op: 'remove'; path: string }> = [];
         const p = this.modelState.index.findPositionPath(elementId);
         if (p) ops.push({ op: 'remove', path: p });
         const s = this.modelState.index.findSizePath(elementId);
         if (s) ops.push({ op: 'remove', path: s });
+        const r = this.modelState.index.findRoutePath(elementId);
+        if (r) ops.push({ op: 'remove', path: r });
         return ops;
     }
 }

@@ -31,7 +31,7 @@ export namespace EnumerationPropertyPaletteHandler {
                         elementId={context.semanticElement.__id}
                         propertyId='isAbstract'
                         value={!!context.semanticElement.isAbstract}
-                        label='isAbstract'
+                        label='Is Abstract'
                     />
                     <ChoiceProperty
                         elementId={context.semanticElement.__id}

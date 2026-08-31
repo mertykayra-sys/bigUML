@@ -16,6 +16,7 @@ import type { CommunicationDiagram } from './diagram/communication-diagram.def.j
 import type { DeploymentDiagram } from './diagram/deployment-diagram.def.js';
 import type { InformationFlowDiagram } from './diagram/information-flow-diagram.def.js';
 import type { PackageDiagram } from './diagram/package-diagram.def.js';
+import type { SequenceDiagram } from './diagram/sequence-diagram.def.js';
 import type { StateMachineDiagram } from './diagram/state-machine-diagram.def.js';
 import type { UseCaseDiagram } from './diagram/use-case-diagram.def.js';
 
@@ -28,6 +29,7 @@ export type DiagramType =
     | DeploymentDiagram
     | InformationFlowDiagram
     | PackageDiagram
+    | SequenceDiagram
     | StateMachineDiagram
     | UseCaseDiagram;
 

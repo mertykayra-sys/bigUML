@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  *********************************************************************************/
 import { representationTypeId } from '@borkdominik-biguml/uml-glsp-server';
-import { configureModelElement, FeatureModule, GEdge, PolylineEdgeView } from '@eclipse-glsp/client';
+import { configureModelElement, FeatureModule, GEdge, GEdgeView } from '@eclipse-glsp/client';
 import { DefaultTypes } from '@eclipse-glsp/protocol';
 import { GNoteNode, GNoteNodeView, GTextLabelNode, GTextLabelNodeView, NamedElement, NamedElementView } from '../../elements/index.js';
 import { GEditableLabel, GEditableLabelView } from '../../views/uml-label.view.js';
@@ -47,14 +47,14 @@ export const umlDeploymentDiagramModule = new FeatureModule((bind, unbind, isBou
     configureModelElement(context, representationTypeId(R, DefaultTypes.NODE, 'TextLabel'), GTextLabelNode, GTextLabelNodeView);
 
     // Edges
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'CommunicationPath'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'CommunicationPath'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'CommunicationPath'), GCommunicationPathEdge, GCommunicationPathEdgeView);
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Dependency'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Dependency'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Dependency'), GDependencyEdge, GDependencyEdgeView);
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Manifestation'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Manifestation'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Manifestation'), GManifestationEdge, GManifestationEdgeView);
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Deployment'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Deployment'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Deployment'), GDeploymentEdge, GDeploymentEdgeView);
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Generalization'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Generalization'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Generalization'), GGeneralizationEdge, GGeneralizationEdgeView);
 });

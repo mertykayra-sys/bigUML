@@ -8,12 +8,33 @@
  **********************************************************************************/
 import {
     behaviorLabelPatch,
+    interactionUsePatch,
+    lifelineIdentPatch,
+    parseConstraint,
+    parseStateInvariant,
+    parseStereotype,
+    STEREOTYPE_LABEL_SUFFIX,
     storableGuard,
     storableName,
     storableProse,
-    type BehaviorLabelElement
+    storableText,
+    type BehaviorLabelElement,
+    type InteractionUseElement,
+    type LifelineIdentElement
 } from '@borkdominik-biguml/uml-glsp-server';
-import { isInitialState, isNote, isStatePart, isTextLabel, isTransition } from '@borkdominik-biguml/uml-model-server/grammar';
+import {
+    isInitialState,
+    isInteractionUse,
+    isLifeline,
+    isDurationConstraint,
+    isNote,
+    isStateInvariant,
+    isStatePart,
+    isTextLabel,
+    isTransition,
+    reflection
+} from '@borkdominik-biguml/uml-model-server/grammar';
+import { hasTextName, isTextProperty } from '@borkdominik-biguml/uml-glsp-server/gen/vscode';
 import { ApplyLabelEditOperation, type Command, OperationHandler } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
 import { type AstNode, isAstNode } from 'langium';
@@ -23,6 +44,7 @@ type LabelPatch = { op: 'add'; path: string; value: string } | { op: 'remove'; p
 /** What the label beside a transition's guard stands for: the rest of `trigger [guard] / effect`. */
 const TRANSITION_LABEL_PARTS = ['trigger', 'effect'] as const;
 import { EDGE_GUARD_LABEL_SUFFIX, EDGE_MODIFIERS_LABEL_SUFFIX, storableModifiers } from '../../elements/core/edge-label.js';
+import { KEYWORD_LABEL_SUFFIX } from '../../elements/interaction-use.element.js';
 import { ModelPatchCommand } from '../command/model-patch-command.js';
 import { type DiagramModelState } from '../model/diagram-model-state.js';
 
@@ -113,6 +135,74 @@ export class GenericLabelEditOperationHandler extends OperationHandler {
             );
         }
 
+        // The word a frame writes in the tag on its corner - the `ref` of an interaction use. Asked before
+        // the reference line below, because both are labels of the same shape and the tag is not the line:
+        // without this, retyping the tag would be read as retyping what the box stands for.
+        //
+        // Only where the element has somewhere to keep one, the way the stereotype below is asked: the
+        // frames write a fixed keyword of their own on a label with this same suffix (`sd`, `interaction`),
+        // and those are not editable - but a value written onto a type with no field for it goes into the
+        // file under a rule that cannot read it back. Emptying it clears the property, and the tag then says
+        // what it says by default again.
+        if (operation.labelId.endsWith(KEYWORD_LABEL_SUFFIX) && 'keyword' in reflection.getTypeMetaData(node.$type).properties) {
+            return JSON.stringify(this.buildPropertyPatch(node, semanticId, 'keyword', storableName(operation.text)));
+        }
+
+        // What is written in a `ref` box is its `interaction-use` - `Checkout`, `Login(usr, pwd)`,
+        // `user = sc.Login(usr, pwd) : Boolean` - which is five properties rather than one, so typing on it
+        // writes all five at once. The `=`, the `.`, the parentheses and the colon are notation and are
+        // taken back off on the way in; a line that names no interaction clears all five, which is how the
+        // box is emptied and is no different from clearing any other label - see `interactionUsePatch`.
+        if (isInteractionUse(node)) {
+            const basePath = this.modelState.index.findPath(semanticId);
+            return JSON.stringify(basePath ? interactionUsePatch(basePath, node as InteractionUseElement, operation.text) : []);
+        }
+
+        // A state invariant is the condition written in it and carries no name, so its one label stands for
+        // `invariant`. The braces the constraint notation writes it in come off by being unstorable rather
+        // than by being matched, which is what makes one work for a user who retyped only one of the pair -
+        // see `parseStateInvariant`. Emptying it is refused rather than written through: a shape with
+        // nothing in it is nothing to read and nothing to double-click to start typing in again.
+        if (isStateInvariant(node)) {
+            const invariant = parseStateInvariant(operation.text);
+            return JSON.stringify(invariant === undefined ? [] : this.buildPropertyPatch(node, semanticId, 'invariant', invariant));
+        }
+
+        // A stereotype, on whichever element was carrying one. Asked before anything about the element,
+        // because it is the same thing said about all of them and it is never what that element's other
+        // labels stand for - a lifeline's is its ident, a message's is its name.
+        //
+        // Only where the element actually has somewhere to put it: the relations write a fixed stereotype
+        // of their own (`«dependency»`, `«flow»`) on a label with this same suffix, and those are not
+        // editable - but a value written onto a type with no field for it goes into the file under a rule
+        // that cannot read it back, so the grammar is asked rather than trusted, as `setConnectionPoint`
+        // does. The guillemets come off by being unstorable rather than by being matched (see
+        // `parseStereotype`), and emptying it clears the stereotype rather than storing an empty one.
+        if (operation.labelId.endsWith(STEREOTYPE_LABEL_SUFFIX) && 'stereotype' in reflection.getTypeMetaData(node.$type).properties) {
+            return JSON.stringify(this.buildPropertyPatch(node, semanticId, 'stereotype', parseStereotype(operation.text)));
+        }
+
+        // A duration constraint is the condition written beside its arrow and carries no name, so its one
+        // label stands for `specification`. The braces come off by being unstorable rather than by being
+        // matched - see `parseConstraint`, which is the same act the state invariant's braces go through.
+        // Emptying it is refused: an arrow measuring something the reader is told nothing about says less
+        // than no arrow at all, and there would be nothing left to double-click.
+        if (isDurationConstraint(node)) {
+            const specification = parseConstraint(operation.text);
+            return JSON.stringify(
+                specification === undefined ? [] : this.buildPropertyPatch(node, semanticId, 'specification', specification)
+            );
+        }
+
+        // A lifeline's head is its `lifeline-ident` - `data : Stock`, `: User`, `x[k] : X`, `self` - which
+        // is four properties rather than one, so typing on it writes all four at once. The colon and the
+        // brackets are notation and are taken back off on the way in; an ident that came out empty is
+        // refused, since a head with nothing in it says nothing about which participant it is.
+        if (isLifeline(node)) {
+            const basePath = this.modelState.index.findPath(semanticId);
+            return JSON.stringify(basePath ? lifelineIdentPatch(basePath, node as LifelineIdentElement, operation.text) : []);
+        }
+
         const prop = this.getLabelPropertyName(node);
         const path = this.modelState.index.findPath(semanticId) + '/' + prop;
 
@@ -128,7 +218,26 @@ export class GenericLabelEditOperationHandler extends OperationHandler {
         // Filtered rather than written as typed. A name is parsed as an identifier, so a bracket, a comma
         // or an accented letter in one is not stored badly - it is stored, the file is written, and the
         // next read of it fails. `[ok]` typed onto a control flow is what found this.
-        const value = prop === 'name' ? storableName(operation.text) : operation.text;
+        //
+        // Which filter, though, is a question about the grammar and is asked of it. A name the grammar
+        // reads as free text holds everything that rule can lex, and a message's name is one of those:
+        // what is written on the line is the operation the message calls, so `validate()` is stored with
+        // its pair and drawn with it, `login(usr, pwd)` keeps its comma, and `Hello` is stored as the one
+        // word it is - nothing here puts a pair of parentheses on a label that was typed without them.
+        // See `hasTextName`, generated from the definitions so the filter cannot drift from the rule.
+        const value =
+            prop === 'name'
+                ? hasTextName(node.$type)
+                    ? storableProse(operation.text)
+                    : storableName(operation.text)
+                : // A label standing for some other property is filtered by that property's own rule, the
+                  // way the property palette filters one - written through unfiltered, a `.` or a `(` typed
+                  // onto a label whose property is parsed as a name goes into the file and the file then
+                  // never opens again. `getLabelPropertyName` answers `name` for every element today, so
+                  // this is the branch that keeps that from being a trap for the first one that does not.
+                  isTextProperty(node.$type, prop)
+                  ? storableText(operation.text)
+                  : storableName(operation.text);
         if (value === undefined) {
             return JSON.stringify([]);
         }

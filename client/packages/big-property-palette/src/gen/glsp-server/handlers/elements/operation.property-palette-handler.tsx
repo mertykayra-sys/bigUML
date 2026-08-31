@@ -31,19 +31,19 @@ export namespace OperationPropertyPaletteHandler {
                         elementId={context.semanticElement.__id}
                         propertyId='isAbstract'
                         value={!!context.semanticElement.isAbstract}
-                        label='isAbstract'
+                        label='Is Abstract'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isStatic'
                         value={!!context.semanticElement.isStatic}
-                        label='isStatic'
+                        label='Is Static'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isQuery'
                         value={!!context.semanticElement.isQuery}
-                        label='isQuery'
+                        label='Is Query'
                     />
                     <ChoiceProperty
                         elementId={context.semanticElement.__id}

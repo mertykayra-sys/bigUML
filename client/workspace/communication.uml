@@ -32,12 +32,12 @@
 				"visibility": "PUBLIC",
 				"source": {
 					"__type": "Reference",
-					"__refType": "Lifeline",
+					"__refType": "MessageEnd",
 					"__value": "Lifeline_b0d55547-4de3-4935-a616-db5fc9a132c2"
 				},
 				"target": {
 					"__type": "Reference",
-					"__refType": "Lifeline",
+					"__refType": "MessageEnd",
 					"__value": "Lifeline_cd72c531-16cf-4a6d-b80b-3c7447532619"
 				}
 			}

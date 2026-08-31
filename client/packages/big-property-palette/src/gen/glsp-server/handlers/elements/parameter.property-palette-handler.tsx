@@ -29,25 +29,25 @@ export namespace ParameterPropertyPaletteHandler {
                         elementId={context.semanticElement.__id}
                         propertyId='isException'
                         value={!!context.semanticElement.isException}
-                        label='isException'
+                        label='Is Exception'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isStream'
                         value={!!context.semanticElement.isStream}
-                        label='isStream'
+                        label='Is Stream'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isOrdered'
                         value={!!context.semanticElement.isOrdered}
-                        label='isOrdered'
+                        label='Is Ordered'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isUnique'
                         value={!!context.semanticElement.isUnique}
-                        label='isUnique'
+                        label='Is Unique'
                     />
                     <ChoiceProperty
                         elementId={context.semanticElement.__id}

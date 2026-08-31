@@ -24,6 +24,7 @@ import {
     type Enumeration,
     type Interface,
     type Position,
+    type Route,
     type PrimitiveType,
     type Property,
     type Relation,
@@ -33,6 +34,7 @@ import {
     isEnumeration,
     isInterface,
     isPosition,
+    isRoute,
     isPrimitiveType,
     isProperty,
     isRelation,
@@ -145,6 +147,16 @@ export class DiagramModelIndex extends GModelIndex {
     }
     findSizePath(nodeId: string): string | undefined {
         return this.findPath(`size_${nodeId}`);
+    }
+    /**
+     * The route an edge has been dragged through, if it has one. Named by the same prefixed-id convention
+     * the other layout uses - `route_<edge id>` - so it is reachable without walking the metaInfos.
+     */
+    findRoute(edgeId: string): Route | undefined {
+        return this.findSemanticElement(`route_${edgeId}`, isRoute);
+    }
+    findRoutePath(edgeId: string): string | undefined {
+        return this.findPath(`route_${edgeId}`);
     }
     findPosition(nodeId: string): Position | undefined {
         return this.findSemanticElement(`pos_${nodeId}`, isPosition);

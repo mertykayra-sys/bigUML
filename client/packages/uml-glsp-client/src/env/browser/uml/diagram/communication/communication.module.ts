@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  *********************************************************************************/
 import { representationTypeId } from '@borkdominik-biguml/uml-glsp-server';
-import { bindOrRebind, configureModelElement, EdgeLayoutPostprocessor, FeatureModule, GEdge, PolylineEdgeView } from '@eclipse-glsp/client';
+import { bindOrRebind, configureModelElement, EdgeLayoutPostprocessor, FeatureModule, GEdge, GEdgeView } from '@eclipse-glsp/client';
 import { DefaultTypes } from '@eclipse-glsp/protocol';
 import {
     GInteractionNode,
@@ -51,5 +51,5 @@ export const umlCommunicationDiagramModule = new FeatureModule((bind, unbind, is
         GMessageArrowLabel,
         MessageArrowLabelView
     );
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Message'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Message'), GEdge, GEdgeView);
 });

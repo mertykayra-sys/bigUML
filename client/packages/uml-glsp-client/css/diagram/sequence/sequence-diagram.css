@@ -1,65 +1,123 @@
 /* SEQUENCE DIAGRAM */
 
-.abstract {
-    font-style: italic;
+/*
+ * The dashed line running down from a lifeline's head - the lifetime of the object, and the line the
+ * messages of the interaction arrive on. Drawn by the lifeline's own view rather than as a child element,
+ * because it is not a shape of its own: how far it reaches is the lifeline's height. See
+ * `GSequenceLifelineNodeView`.
+ */
+.uml-lifeline-lifetime {
+    stroke: var(--uml-edge);
+    stroke-width: 1;
+    stroke-dasharray: 6 4;
 }
 
-/* .sequence__Interaction rect {
-    fill-opacity: 0;
-} */
-
-.uml-node .sequence__Lifeline line {
-    stroke-dasharray: 8;
-}
-
-.uml-node .sequence__InteractionOperand line {
-    stroke-dasharray: 16;
-}
-
-.uml-node .sequence__DestructionOccurrenceSpecification line {
-    stroke-dasharray: none;
+/*
+ * A selected lifeline thickens its head, the way every other node does, and the line with it - the line
+ * is as much the shape as the head is, and a lifeline that lit up only along its top edge would not read
+ * as selected at all.
+ */
+.uml-node.selected .uml-lifeline-lifetime,
+.uml-node.mouseover .uml-lifeline-lifetime {
     stroke-width: 2;
 }
 
-.uml-node .sequence__CombinedFragment {
-    fill: rgba(8, 255, 177, 0.5);
-}
-
-.uml-node .sequence__BehaviorExecutionSpecification {
-    fill: var(--uml-border);
-}
-
-.uml-node .sequence__InteractionUse {
-    fill: rgb(249, 254, 153);
-}
-
-.uml-node .sequence__InteractionOperand rect {
+/*
+ * The two rules down the sides of an active object's head - the participant that has a thread of its own
+ * and runs rather than waiting to be called.
+ *
+ * Drawn in the border colour and at the border's weight, because that is what they are: the head read as
+ * doubled along its two upright edges, which is how UML marks an active object. Unfilled, being lines.
+ *
+ * They thicken with the head when it is picked, the way the boundary icon beside them does. Written out
+ * rather than left to `.uml-node.selected`, which sets the weight on the whole node group: the rules would
+ * follow it either way, but so would the lifetime line, and the two are given different weights below and
+ * above this.
+ */
+.uml-lifeline-active-rule {
+    fill: none;
+    stroke: var(--uml-border);
     stroke-width: 1;
-    /* stroke-dasharray: 6; */
-    border-right: 0;
-    fill: rgba(8, 255, 177, 0.5);
 }
 
-.uml-node .sequence__MessageAnchor {
-    fill: var(--uml-border);
-}
-.uml-port {
-    stroke-width: 3;
-    stroke: transparent;
-    fill: #d4d4d49b;
+.uml-node.selected .uml-lifeline-active-rule,
+.uml-node.mouseover .uml-lifeline-active-rule {
+    stroke-width: 2;
 }
 
-.uml-port:hover {
-    stroke-width: 3;
-    stroke: #17fc2685;
-    fill: #00c40dcb;
+/*
+ * A state invariant written the usual way - the condition in curly braces on the line - is writing rather
+ * than a shape, so nothing is drawn around it. What the patch is for is the lifetime line behind it: the
+ * line is drawn by the lifeline and would otherwise run straight through the condition, so the node's own
+ * fill is laid over it. The fill is inherited from `.uml-node`; only the stroke has to be taken back,
+ * which would otherwise outline the patch and turn the writing into a box.
+ *
+ * The state symbol the invariant can be drawn as instead is a shape, and is drawn as one - it takes
+ * `.uml-node-background` like every other node and needs nothing here.
+ */
+.uml-state-invariant-node .uml-state-invariant-patch {
+    stroke: none;
 }
 
-.clickbound {
-    fill: #00c40dcb;
-    opacity: 0;
+/*
+ * Hovered or selected it still has to show what it covers and how far it reaches, so an outline comes out
+ * for as long as the pointer is on it - dashed, and the way a free label's does, because it marks the
+ * extent of some writing rather than a border the writing is drawn with.
+ *
+ * The width is set here rather than inherited: `.uml-node.selected` thickens a shape's own border, and
+ * this is not one - at three pixels the dashes read as a box after all.
+ */
+.uml-state-invariant-node.mouseover .uml-state-invariant-patch,
+.uml-state-invariant-node.selected .uml-state-invariant-patch {
+    stroke: var(--uml-border);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
 }
 
-.uml-edge-dashed {
-    stroke-dasharray: 15 10;
+/*
+ * The boundary a lifeline can be drawn as: a circle with an upright bar against it.
+ *
+ * Stroked and unfilled, the way the actor's stick figure beside it is - both are drawings that stand for a
+ * participant rather than shapes holding anything, and a filled circle would read as a control node from
+ * one of the other diagrams. The stroke is taken from the border colour so it reads the same in either
+ * theme, and thickens with the rest of the head when the lifeline is picked.
+ */
+.uml-lifeline-boundary {
+    fill: none;
+    stroke: var(--uml-border);
+    stroke-width: 1;
+}
+
+.uml-lifeline-boundary.selected,
+.uml-lifeline-boundary.mouseover {
+    stroke-width: 2;
+}
+
+/*
+ * The double-headed arrow of a duration constraint: the line, and the two heads turned in towards each
+ * other.
+ *
+ * The line takes the edge colour rather than the border one - it is a measurement drawn across the diagram
+ * rather than the outline of a shape - and the heads are filled in the same colour so the pair reads as one
+ * arrow. Both take their stroke and fill here rather than inheriting, because `.uml-node` gives a shape a
+ * fill and a border and this is neither.
+ */
+.uml-duration-arrow {
+    fill: none;
+    stroke: var(--uml-edge);
+    stroke-width: 1;
+}
+
+.uml-duration-arrow-head {
+    fill: var(--uml-edge);
+    stroke: none;
+}
+
+/*
+ * Selected or pointed at, the arrow thickens the way every other shape's outline does. The heads are left
+ * alone: they are solid already, and a stroke around a filled triangle only blunts it.
+ */
+.uml-duration-constraint-node.mouseover .uml-duration-arrow,
+.uml-duration-constraint-node.selected .uml-duration-arrow {
+    stroke-width: 2;
 }

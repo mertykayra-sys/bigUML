@@ -35,6 +35,7 @@ import {
     GenericCreateEdgeOperationHandler,
     GenericCreateNodeOperationHandler,
     GenericDeleteOperationHandler,
+    GenericReconnectEdgeOperationHandler,
     GenericUpdateOperationHandler
 } from '../mutation/index.js';
 import { GenericDiagramModelValidator } from '../validator/generic-diagram-model-validator.js';
@@ -84,6 +85,7 @@ export abstract class BigDiagramModule extends DiagramModule {
         binding.add(GenericChangeRoutingPointsOperationHandler);
         binding.add(GenericCreateNodeOperationHandler);
         binding.add(GenericCreateEdgeOperationHandler);
+        binding.add(GenericReconnectEdgeOperationHandler);
         binding.add(GenericLabelEditOperationHandler);
         binding.add(GenericUpdateOperationHandler);
         binding.add(GenericDeleteOperationHandler);

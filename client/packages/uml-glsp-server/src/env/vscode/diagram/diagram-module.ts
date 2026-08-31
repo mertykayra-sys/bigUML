@@ -19,6 +19,8 @@ import {
     InformationFlowDiagramToolPaletteItemProvider,
     PackageDiagramLanguageMetadata,
     PackageDiagramToolPaletteItemProvider,
+    SequenceDiagramLanguageMetadata,
+    SequenceDiagramToolPaletteItemProvider,
     StateMachineDiagramLanguageMetadata,
     StateMachineDiagramToolPaletteItemProvider,
     UseCaseDiagramLanguageMetadata,
@@ -64,6 +66,7 @@ export class UmlDiagramModule extends BigDiagramModule {
         bind(DeploymentDiagramLanguageMetadata).toSelf().inSingletonScope();
         bind(InformationFlowDiagramLanguageMetadata).toSelf().inSingletonScope();
         bind(PackageDiagramLanguageMetadata).toSelf().inSingletonScope();
+        bind(SequenceDiagramLanguageMetadata).toSelf().inSingletonScope();
         bind(StateMachineDiagramLanguageMetadata).toSelf().inSingletonScope();
         bind(UseCaseDiagramLanguageMetadata).toSelf().inSingletonScope();
         // Proxy that delegates to the correct metadata based on the active diagram type
@@ -76,6 +79,7 @@ export class UmlDiagramModule extends BigDiagramModule {
         bind(DeploymentDiagramToolPaletteItemProvider).toSelf().inSingletonScope();
         bind(InformationFlowDiagramToolPaletteItemProvider).toSelf().inSingletonScope();
         bind(PackageDiagramToolPaletteItemProvider).toSelf().inSingletonScope();
+        bind(SequenceDiagramToolPaletteItemProvider).toSelf().inSingletonScope();
         bind(StateMachineDiagramToolPaletteItemProvider).toSelf().inSingletonScope();
         bind(UseCaseDiagramToolPaletteItemProvider).toSelf().inSingletonScope();
     }

@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  **********************************************************************************/
 
-import { CommonModelTypes, storableText } from '@borkdominik-biguml/uml-glsp-server';
+import { CommonModelTypes, stereotypeText, storableText } from '@borkdominik-biguml/uml-glsp-server';
 import { GLabelElement } from '@borkdominik-biguml/uml-glsp-server/jsx';
 import type { GModelElement } from '@eclipse-glsp/server';
 
@@ -238,13 +238,13 @@ export interface EdgeStereotypeLabelProps {
     stereotype: string;
 }
 
-/** Renders `<<stereotype>>` below the edge. */
+/** Renders `«stereotype»` below the edge. */
 export function EdgeStereotypeLabel(props: EdgeStereotypeLabelProps): GModelElement {
     return (
         <GLabelElement
             id={props.id + '_stereotype_label'}
             type={CommonModelTypes.LABEL_TEXT}
-            text={`<<${props.stereotype}>>`}
+            text={stereotypeText(props.stereotype)}
             edgePlacement={STEREOTYPE_PLACEMENT}
         />
     );

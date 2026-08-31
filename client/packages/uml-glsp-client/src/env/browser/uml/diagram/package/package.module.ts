@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  *********************************************************************************/
 import { representationTypeId } from '@borkdominik-biguml/uml-glsp-server';
-import { configureModelElement, FeatureModule, GEdge, PolylineEdgeView } from '@eclipse-glsp/client';
+import { configureModelElement, FeatureModule, GEdge, GEdgeView } from '@eclipse-glsp/client';
 import { DefaultTypes } from '@eclipse-glsp/protocol';
 import {
     GNoteNode,
@@ -37,13 +37,13 @@ export const umlPackageDiagramModule = new FeatureModule((bind, unbind, isBound,
     configureModelElement(context, representationTypeId(R, DefaultTypes.NODE, 'TextLabel'), GTextLabelNode, GTextLabelNodeView);
 
     // Edges
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Abstraction'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Abstraction'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Abstraction'), GAbstractionEdge, GAbstractionEdgeView);
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Dependency'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Dependency'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'Dependency'), GDependencyEdge, GDependencyEdgeView);
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'ElementImport'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'ElementImport'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'ElementImport'), GElementImportEdge, GElementImportEdgeView);
-    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'PackageImport'), GEdge, PolylineEdgeView);
+    configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'PackageImport'), GEdge, GEdgeView);
     // configureModelElement(context, representationTypeId(R, DefaultTypes.EDGE, 'PackageImport'), GPackageImportEdge, GPackageImportEdgeView);
     // Its own class rather than a plain edge, as in the class diagram: the router picks the merges out
     // by it, to draw the ones running into the same package as branches off a single connector.

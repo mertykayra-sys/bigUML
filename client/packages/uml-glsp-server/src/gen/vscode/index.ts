@@ -20,6 +20,8 @@ export * from './diagram/information-flow/information-flow-diagram-language-meta
 export * from './diagram/information-flow/information-flow-diagram-tool-palette-item-provider.js';
 export * from './diagram/package/package-diagram-language-metadata.js';
 export * from './diagram/package/package-diagram-tool-palette-item-provider.js';
+export * from './diagram/sequence/sequence-diagram-language-metadata.js';
+export * from './diagram/sequence/sequence-diagram-tool-palette-item-provider.js';
 export * from './diagram/state-machine/state-machine-diagram-language-metadata.js';
 export * from './diagram/state-machine/state-machine-diagram-tool-palette-item-provider.js';
 export * from './diagram/use-case/use-case-diagram-language-metadata.js';

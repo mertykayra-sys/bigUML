@@ -9,4 +9,4 @@
 export * from './layout/uml-centered-vbox.layout.js';
 export * from './layout/uml-freeform.layout.js';
 export * from './layout/uml-layouter.js';
-
+export * from './layout/uml-tagged-vbox.layout.js';

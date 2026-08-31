@@ -73,6 +73,27 @@ export namespace InteractionPropertyPaletteHandler {
                             }
                         ]}
                     />
+                    <ReferenceProperty
+                        elementId={context.semanticElement.__id}
+                        propertyId='formalGates'
+                        label='Formal Gates'
+                        references={(context.semanticElement.formalGates ?? [])
+                            .filter((e: any) => !!e && !!e.__id)
+                            .map((e: any) => ({
+                                elementId: e.__id,
+                                label: e.name ?? '(unnamed gate)',
+                                name: e.name ?? '',
+                                deleteActions: [DeleteElementOperation.create([e.__id])]
+                            }))}
+                        creates={[
+                            {
+                                label: 'Create Gate',
+                                action: CreateNodeOperation.create(context.languageMetadata.convertToElementType('Gate'), {
+                                    containerId: context.semanticElement.__id
+                                })
+                            }
+                        ]}
+                    />
                 </PropertyPalette>
             )
         ];

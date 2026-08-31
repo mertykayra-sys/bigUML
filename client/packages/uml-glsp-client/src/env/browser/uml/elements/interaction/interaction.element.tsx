@@ -9,8 +9,12 @@
 import { injectable } from 'inversify';
 import { NamedElement } from '../named-element/index.js';
 import { FrameNodeView } from '../../views/uml-frame.view.js';
+import { staysBehindFeature } from '../../../features/zorder/stays-behind.js';
 
-export class GInteractionNode extends NamedElement {}
+export class GInteractionNode extends NamedElement {
+    /** A frame - the frame the whole communication or sequence diagram is drawn inside - is drawn behind them and must stay there. */
+    static override readonly DEFAULT_FEATURES = [...super.DEFAULT_FEATURES, staysBehindFeature];
+}
 
 /** An interaction: the frame the whole communication diagram is drawn inside. */
 @injectable()

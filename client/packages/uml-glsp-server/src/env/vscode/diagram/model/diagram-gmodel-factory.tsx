@@ -17,6 +17,7 @@ import {
     isActor,
     isArtifact,
     isAssociation,
+    isBehaviorExecutionSpecification,
     isCentralBufferNode,
     isChoice,
     isClass,
@@ -31,6 +32,7 @@ import {
     isDeploymentNode,
     isDeploymentPackage,
     isDeploymentSpecification,
+    isDestructionOccurrenceSpecification,
     isDevice,
     isElementImport,
     isEntryPoint,
@@ -40,7 +42,9 @@ import {
     isExtend,
     isFinalState,
     isFlowFinalNode,
+    isDurationConstraint,
     isFork,
+    isGate,
     isForkNode,
     isGeneralization,
     isInclude,
@@ -50,6 +54,8 @@ import {
     isInputPin,
     isInstanceSpecification,
     isInteraction,
+    isCombinedFragment,
+    isInteractionUse,
     isInterface,
     isInterfaceRealization,
     isJoin,
@@ -72,6 +78,7 @@ import {
     isSendSignalAction,
     isShallowHistory,
     isState,
+    isStateInvariant,
     isStateMachine,
     isSubject,
     isSubstitution,
@@ -80,6 +87,7 @@ import {
     isTransition,
     isUsage,
     isUseCase,
+    type BehaviorExecutionSpecification,
     type Region
 } from '@borkdominik-biguml/uml-model-server/grammar';
 import type { GEdge, GGraph, GModelElement, GModelFactory } from '@eclipse-glsp/server';
@@ -94,12 +102,14 @@ import { createActivityElement } from '../../elements/activity.element.js';
 import { createActorElement } from '../../elements/actor.element.js';
 import { createArtifactElement } from '../../elements/artifact.element.js';
 import { createAssociationRelation } from '../../elements/association-relation.element.js';
+import { createBehaviorExecutionSpecificationElement } from '../../elements/behavior-execution-specification.element.js';
 import { createCentralBufferNodeElement } from '../../elements/central-buffer-node.element.js';
 import { createChoiceElement } from '../../elements/choice.element.js';
 import { createClassElement } from '../../elements/class.element.js';
 import { createCommunicationPathRelation } from '../../elements/communication-path.element.js';
 import { createControlFlowRelation } from '../../elements/control-flow.element.js';
 import type { ElementContext } from '../../elements/core/element-context.js';
+import { isSurfaceMark } from '../../elements/core/surface-mark.js';
 import { createDataTypeElement } from '../../elements/data-type.element.js';
 import { createDecisionNodeElement } from '../../elements/decision-node.element.js';
 import { createDeepHistoryElement } from '../../elements/deep-history.element.js';
@@ -109,6 +119,7 @@ import { createDeploymentNodeElement } from '../../elements/deployment-node.elem
 import { createDeploymentPackageElement } from '../../elements/deployment-package.element.js';
 import { createDeploymentRelation } from '../../elements/deployment-relation.element.js';
 import { createDeploymentSpecificationElement } from '../../elements/deployment-specification.element.js';
+import { createDestructionOccurrenceSpecificationElement } from '../../elements/destruction-occurrence-specification.element.js';
 import { createDeviceElement } from '../../elements/device.element.js';
 import { createElementImportRelation } from '../../elements/element-import.element.js';
 import { createEntryPointElement } from '../../elements/entry-point.element.js';
@@ -120,6 +131,8 @@ import { createFinalStateElement } from '../../elements/final-state.element.js';
 import { createFlowFinalNodeElement } from '../../elements/flow-final-node.element.js';
 import { createForkNodeElement } from '../../elements/fork-node.element.js';
 import { createForkElement } from '../../elements/fork.element.js';
+import { createDurationConstraintElement } from '../../elements/duration-constraint.element.js';
+import { createGateElement } from '../../elements/gate.element.js';
 import { createGeneralizationRelation } from '../../elements/generalization-relation.element.js';
 import { createIncludeRelation } from '../../elements/include-relation.element.js';
 import { createInformationFlowRelation } from '../../elements/information-flow.element.js';
@@ -127,6 +140,8 @@ import { createInitialNodeElement } from '../../elements/initial-node.element.js
 import { createInitialStateElement } from '../../elements/initial-state.element.js';
 import { createInputPinElement } from '../../elements/input-pin.element.js';
 import { createInstanceSpecificationElement } from '../../elements/instance-specification.element.js';
+import { createCombinedFragmentElement } from '../../elements/combined-fragment.element.js';
+import { createInteractionUseElement } from '../../elements/interaction-use.element.js';
 import { createInteractionElement } from '../../elements/interaction.element.js';
 import { createInterfaceRealizationRelation } from '../../elements/interface-realization-relation.element.js';
 import { createInterfaceElement } from '../../elements/interface.element.js';
@@ -149,6 +164,7 @@ import { createRealizationRelation } from '../../elements/realization-relation.e
 import { createRegionElement } from '../../elements/region.element.js';
 import { createSendSignalActionElement } from '../../elements/send-signal-action.element.js';
 import { createShallowHistoryElement } from '../../elements/shallow-history.element.js';
+import { createStateInvariantElement } from '../../elements/state-invariant.element.js';
 import { createStateMachineElement } from '../../elements/state-machine.element.js';
 import { createStateElement } from '../../elements/state.element.js';
 import { createSubjectElement } from '../../elements/subject.element.js';
@@ -163,8 +179,46 @@ import { DiagramLanguageMetadata } from '../../features/model/diagram-language-m
 import { DiagramModelIndex } from '../../features/model/diagram-model-index.js';
 
 /** Nodes that are drawn as a boundary around other, flatly listed nodes of the same diagram. */
+/**
+ * Which layer of the drawing an element belongs to, lowest painted first.
+ *
+ * The semantic model nests and the graph is flat (see `collectSemanticElements`), so the order the nodes
+ * come out in is the order they were walked - and that order is about containment, not about what covers
+ * what. Three things have to be true of the drawing regardless of it:
+ *
+ * A frame is a boundary drawn *around* part of the diagram and must stay behind what stands on it.
+ *
+ * A mark drawn *on* a shape - the bars and the cross and the conditions on a lifeline, the gates on a
+ * frame's border - must stay in front of every shape, and not merely in front of the one it belongs to.
+ * Walked depth-first they land immediately after their owner, which puts them behind everything created
+ * after that owner: a bar placed on the first lifeline of a diagram was painted under the second lifeline,
+ * under the `ref` box and under anything else added since, and a shape you have just placed and cannot see
+ * reads as a shape that was not placed at all.
+ *
+ * Everything else sits between the two, in the order it was written, which is the order it was added.
+ */
+function paintLayer(element: unknown): number {
+    if (isCanvasContainer(element)) {
+        return 0;
+    }
+    if (isSurfaceMark(element)) {
+        return 2;
+    }
+    return 1;
+}
+
 function isCanvasContainer(element: unknown): boolean {
-    return isSubject(element) || isStateMachine(element) || isRegion(element) || isActivity(element) || isActivityPartition(element);
+    return (
+        isSubject(element) ||
+        isStateMachine(element) ||
+        isRegion(element) ||
+        isActivity(element) ||
+        isActivityPartition(element) ||
+        // An interaction is the frame the whole communication or sequence diagram is drawn inside, and
+        // its lifelines stand on it as flat siblings (see `FLAT_CONTAINER_TYPES`). Left out of this, a
+        // frame added after the lifelines it holds was painted over them and hid them behind its fill.
+        isInteraction(element)
+    );
 }
 
 @injectable()
@@ -192,12 +246,11 @@ export class UmlDiagramGModelFactory implements GModelFactory {
         const collectedEdges: unknown[] = [...diagram.relations];
         diagram.entities.forEach(entity => this.collectSemanticElements(entity, collectedNodes, collectedEdges));
 
-        // Subjects, state machine frames and regions act as containers drawn around other nodes, so
-        // they must always paint behind them, regardless of the order in which they were created
-        // relative to the nodes they contain. The sort is stable, so a container nested in another one
-        // keeps the depth-first order `collectSemanticElements` put it in - a region still paints in
-        // front of the frame that owns it, and behind the states that sit on it.
-        const entities = collectedNodes.sort((a, b) => Number(isCanvasContainer(b)) - Number(isCanvasContainer(a)));
+        // Painted in layers rather than in the order they were walked - see `paintLayer` for what each of
+        // them is for. The sort is stable, so within a layer everything keeps the depth-first order
+        // `collectSemanticElements` put it in: a region still paints in front of the frame that owns it
+        // and behind the states that sit on it, and a node added later still paints over one added before.
+        const entities = collectedNodes.sort((a, b) => paintLayer(a) - paintLayer(b));
         const nodes = entities.map(e => this.createNodeElement(e)).filter(Boolean) as GModelElement[];
         const edges = collectedEdges
             .filter((r: any) => r.source?.ref && r.target?.ref)
@@ -249,7 +302,47 @@ export class UmlDiagramGModelFactory implements GModelFactory {
         if (isInteraction(element)) {
             element.lifelines?.forEach(lifeline => this.collectSemanticElements(lifeline, nodes, edges));
             element.messages?.forEach(message => edges.push(message));
+            // And the gates on its own border - the formal ones, which a use of this interaction has to
+            // provide an actual gate against.
+            element.formalGates?.forEach(gate => nodes.push(gate));
         }
+
+        // A `ref` box owns the actual gates on its border, standing for the formal ones of whatever it
+        // refers to. Collected as nodes of their own, like everything else drawn on another shape here -
+        // a gate is put *on* the border by being given a position on it, not by being nested in the frame
+        // (see `gateBounds`).
+        if (isInteractionUse(element)) {
+            element.actualGates?.forEach(gate => nodes.push(gate));
+        }
+
+        // And a lifeline owns what is drawn on its line: the execution bars, the cross where its life
+        // ends, and the conditions that have to hold of it along the way. All are collected as nodes of
+        // their own rather than as children of the lifeline, because the graph is flat - each is placed
+        // *on* the line by being given the position of it, not by being nested in it (see
+        // `executionBounds` and the rest of `lifeline-geometry`).
+        if (isLifeline(element)) {
+            element.executions?.forEach(execution => this.collectExecutions(execution, nodes));
+            element.destructions?.forEach(destruction => nodes.push(destruction));
+            element.stateInvariants?.forEach(invariant => nodes.push(invariant));
+        }
+
+        // A bar nested inside another is reached through the bar that holds it, and is a node of its own
+        // once it is - there is no containment on the canvas here either.
+        if (isBehaviorExecutionSpecification(element)) {
+            element.executions?.forEach(execution => this.collectExecutions(execution, nodes));
+        }
+    }
+
+    /**
+     * A bar and every bar nested inside it, parent before child.
+     *
+     * The order is the drawing order: these all sort alike (see `isSurfaceMark`), and a stable sort leaves
+     * them in the order they were collected - so a nested bar is painted over the one it is inside rather
+     * than under it, which is the whole of what makes the nesting visible.
+     */
+    protected collectExecutions(execution: BehaviorExecutionSpecification, nodes: unknown[]): void {
+        nodes.push(execution);
+        execution.executions?.forEach(nested => this.collectExecutions(nested, nodes));
     }
 
     /**
@@ -302,9 +395,16 @@ export class UmlDiagramGModelFactory implements GModelFactory {
         if (isUseCase(element)) return createUseCaseElement(this.buildCtx(element));
         if (isActor(element)) return createActorElement(this.buildCtx(element));
         if (isSubject(element)) return createSubjectElement(this.buildCtx(element));
-        // Communication diagram nodes
+        // Communication and sequence diagram nodes
         if (isInteraction(element)) return createInteractionElement(this.buildCtx(element));
         if (isLifeline(element)) return createLifelineElement(this.buildCtx(element));
+        if (isInteractionUse(element)) return createInteractionUseElement(this.buildCtx(element));
+        if (isCombinedFragment(element)) return createCombinedFragmentElement(this.buildCtx(element));
+        if (isBehaviorExecutionSpecification(element)) return createBehaviorExecutionSpecificationElement(this.buildCtx(element));
+        if (isDestructionOccurrenceSpecification(element)) return createDestructionOccurrenceSpecificationElement(this.buildCtx(element));
+        if (isStateInvariant(element)) return createStateInvariantElement(this.buildCtx(element));
+        if (isGate(element)) return createGateElement(this.buildCtx(element));
+        if (isDurationConstraint(element)) return createDurationConstraintElement(this.buildCtx(element));
         // Deployment diagram nodes
         if (isArtifact(element)) return createArtifactElement(this.buildCtx(element));
         if (isDeploymentSpecification(element)) return createDeploymentSpecificationElement(this.buildCtx(element));
@@ -334,10 +434,26 @@ export class UmlDiagramGModelFactory implements GModelFactory {
         return undefined;
     }
 
+    /**
+     * An edge, routed the way it was last dragged - or, failing that, the way the notation asks for.
+     *
+     * A stored `Route` is what someone has said about this edge (see
+     * `GenericChangeRoutingPointsOperationHandler`), and it is what every relation here is drawn along.
+     * Every relation that builds no route of its own, that is: most build none and are drawn straight
+     * between their ends, and for those this is the only route there is.
+     *
+     * A sequence message is the one that does. Its height is where it is drawn on the page, so it has a
+     * route from the moment it is created (see `createMessageRelation`) - and the stored one is not the
+     * whole answer for it either, because a message reaching a lifeline where the participant is destroyed
+     * runs level with the cross rather than at whatever number was last written. So the message reads its
+     * own stored route, answers it, and what it returns is kept. Overriding it here drew such a message as
+     * a diagonal: only the end on the cross moved.
+     */
     protected createEdgeElement(edge: unknown): GEdge | undefined {
         const gEdge = this.buildEdgeElement(edge);
-        if (gEdge) {
-            gEdge.routingPoints = this.modelState.getRoutingPoints(gEdge.id) ?? [];
+        if (gEdge && !gEdge.routingPoints?.length) {
+            const stored = this.modelIndex.findRoute(gEdge.id)?.points;
+            gEdge.routingPoints = stored?.length ? stored.map(point => ({ x: point.x, y: point.y })) : [];
         }
         return gEdge;
     }

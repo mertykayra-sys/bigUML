@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 /** @jsx svg */
+import { LIFELINE_ACTOR_SCALE } from '@borkdominik-biguml/uml-glsp-server';
 import {
     boundsFeature,
     fadeFeature,
@@ -75,4 +76,17 @@ export class StickFigureView extends ShapeView {
 @injectable()
 export class InformationFlowStickFigureView extends StickFigureView {
     protected override readonly scale: number = 1.8;
+}
+
+/**
+ * The actor at the head of a sequence diagram's lifeline.
+ *
+ * The smallest of the three. Elsewhere the figure is the shape carrying the meaning and stands beside
+ * others of its own size; here it is what a lifeline is labelled with, sitting on top of a line with a name
+ * under it - drawn full size it would tower over the boxed heads beside it and push the first message down
+ * the page to clear it.
+ */
+@injectable()
+export class SequenceStickFigureView extends StickFigureView {
+    protected override readonly scale: number = LIFELINE_ACTOR_SCALE;
 }

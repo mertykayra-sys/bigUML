@@ -29,43 +29,43 @@ export namespace PropertyPropertyPaletteHandler {
                         elementId={context.semanticElement.__id}
                         propertyId='isDerived'
                         value={!!context.semanticElement.isDerived}
-                        label='isDerived'
+                        label='Is Derived'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isOrdered'
                         value={!!context.semanticElement.isOrdered}
-                        label='isOrdered'
+                        label='Is Ordered'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isStatic'
                         value={!!context.semanticElement.isStatic}
-                        label='isStatic'
+                        label='Is Static'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isDerivedUnion'
                         value={!!context.semanticElement.isDerivedUnion}
-                        label='isDerivedUnion'
+                        label='Is Derived Union'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isReadOnly'
                         value={!!context.semanticElement.isReadOnly}
-                        label='isReadOnly'
+                        label='Is Read Only'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isNavigable'
                         value={!!context.semanticElement.isNavigable}
-                        label='isNavigable'
+                        label='Is Navigable'
                     />
                     <BoolProperty
                         elementId={context.semanticElement.__id}
                         propertyId='isUnique'
                         value={!!context.semanticElement.isUnique}
-                        label='isUnique'
+                        label='Is Unique'
                     />
                     <ChoiceProperty
                         elementId={context.semanticElement.__id}

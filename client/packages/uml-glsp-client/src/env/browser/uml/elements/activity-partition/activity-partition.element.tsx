@@ -10,9 +10,13 @@
 import { type GNode, RectangularNodeView, type RenderingContext, svg } from '@eclipse-glsp/client';
 import { injectable } from 'inversify';
 import { type VNode } from 'snabbdom';
+import { staysBehindFeature } from '../../../features/zorder/stays-behind.js';
 import { NamedElement } from '../named-element/named-element.view.js';
 
-export class GActivityPartitionNode extends NamedElement {}
+export class GActivityPartitionNode extends NamedElement {
+    /** A swimlane is drawn behind the actions laid along it and must stay there. */
+    static override readonly DEFAULT_FEATURES = [...super.DEFAULT_FEATURES, staysBehindFeature];
+}
 
 /** How deep the band holding a lane's name is, measured in from the lane's leading edge. */
 const NAME_BAND_DEPTH = 32;

@@ -13,6 +13,7 @@ import {
     DeploymentDiagramLanguageMetadata,
     InformationFlowDiagramLanguageMetadata,
     PackageDiagramLanguageMetadata,
+    SequenceDiagramLanguageMetadata,
     StateMachineDiagramLanguageMetadata,
     UseCaseDiagramLanguageMetadata
 } from '@borkdominik-biguml/uml-glsp-server/gen/vscode';
@@ -47,6 +48,9 @@ export class DefaultDiagramLanguageMetadata implements DiagramLanguageMetadata {
     @inject(PackageDiagramLanguageMetadata)
     protected readonly packageMetadata: PackageDiagramLanguageMetadata;
 
+    @inject(SequenceDiagramLanguageMetadata)
+    protected readonly sequenceMetadata: SequenceDiagramLanguageMetadata;
+
     @inject(StateMachineDiagramLanguageMetadata)
     protected readonly stateMachineMetadata: StateMachineDiagramLanguageMetadata;
 
@@ -67,6 +71,8 @@ export class DefaultDiagramLanguageMetadata implements DiagramLanguageMetadata {
                 return this.informationFlowMetadata;
             case 'PACKAGE':
                 return this.packageMetadata;
+            case 'SEQUENCE':
+                return this.sequenceMetadata;
             case 'STATE_MACHINE':
                 return this.stateMachineMetadata;
             case 'USE_CASE':

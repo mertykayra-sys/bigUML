@@ -31,7 +31,7 @@ export namespace ClassPropertyPaletteHandler {
                         elementId={context.semanticElement.__id}
                         propertyId='isAbstract'
                         value={!!context.semanticElement.isAbstract}
-                        label='isAbstract'
+                        label='Is Abstract'
                     />
                     <ReferenceProperty
                         elementId={context.semanticElement.__id}
@@ -79,7 +79,7 @@ export namespace ClassPropertyPaletteHandler {
                         elementId={context.semanticElement.__id}
                         propertyId='isActive'
                         value={!!context.semanticElement.isActive}
-                        label='isActive'
+                        label='Is Active'
                     />
                     <ChoiceProperty
                         elementId={context.semanticElement.__id}

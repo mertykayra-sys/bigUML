@@ -28,6 +28,26 @@ svg .uml-node .uml-node-background {
 }
 
 /*
+ * A node drawn as its outline alone, with nothing painted behind it.
+ *
+ * Carried by the two shapes of a sequence diagram that are dragged across the rest of it - a `ref` box and
+ * a combined fragment - whenever their `fill` says transparent, which is the default for a fragment and the
+ * choice for a `ref` box (see `frameFillClasses`). It is written for the class and not for either shape, so
+ * anything else that grows the same choice can be given it.
+ *
+ * `fill: none` and not a transparent colour, because the two differ in what they do about the pointer as
+ * well as about the paint: an unpainted fill takes no pointer events, so the inside of the box goes
+ * click-through and whatever stands within its bounds keeps its clicks. The box itself is still selected and
+ * resized by its border, which is widened to something aimable by `hitStrokeBox`.
+ *
+ * What is drawn *on* the box is untouched: the tag on its corner, the text inside it and the dashed rules
+ * between a fragment's operands are all drawn over the fill rather than by it.
+ */
+.uml-transparent-node .uml-node-background {
+    fill: none;
+}
+
+/*
  * A fork/join bar is a solid rule rather than an outlined shape, so it takes the border colour as its
  * fill and reads the same way in either theme. The stroke is left to `.uml-node`, which is what still
  * thickens the bar on hover and selection.
@@ -138,11 +158,16 @@ svg .uml-node .uml-node-background {
  *
  * Both properties are set here rather than inherited, so that `.uml-node.selected` thickening the shape
  * cannot thicken this along with it - what can be clicked should not depend on what is selected.
+ *
+ * The width is twice `HIT_SLACK`, since a stroke is drawn half either side of the line it follows - which
+ * is what makes a border ask the same of the pointer as the shapes that take an area of slack instead.
+ * The two are held together by this note and nothing else: the slack a border gets can only be given in
+ * CSS, and the slack an area gets can only be given in the geometry.
  */
 .uml-hit-stroke {
     fill: none;
     stroke: transparent;
-    stroke-width: 16;
+    stroke-width: 20;
 }
 
 .uml-comp-separator {

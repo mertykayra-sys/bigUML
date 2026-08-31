@@ -15,6 +15,12 @@ import type { BaseElementProps, ElementContext } from './core/element-context.js
 
 export interface GInteractionNodeElementProps extends BaseElementProps {
     node: Interaction;
+    /**
+     * The word written in bold before the frame's name. `interaction` on a communication diagram, `sd`
+     * on a sequence diagram - UML labels a sequence frame with the notation it is drawn in rather than
+     * with the metaclass, and `sd` is what it uses for that.
+     */
+    keyword?: string;
 }
 
 /**
@@ -76,7 +82,7 @@ export function GInteractionNodeElement(props: GInteractionNodeElementProps): GM
                 prefHeight: size.height
             }}
         >
-            <FrameNameTag id={props.node.__id} keyword='interaction' name={props.node.name} />
+            <FrameNameTag id={props.node.__id} keyword={props.keyword ?? 'interaction'} name={props.node.name} />
         </GNodeElement>
     );
 }
@@ -84,5 +90,13 @@ export function GInteractionNodeElement(props: GInteractionNodeElementProps): GM
 export function createInteractionElement(ctx: ElementContext<Interaction>): GModelElement {
     const position = ctx.modelIndex.findPosition(ctx.node.__id);
     const size = ctx.modelIndex.findSize(ctx.node.__id);
-    return <GInteractionNodeElement node={ctx.node} position={position} size={size} type={ctx.elementType} />;
+    return (
+        <GInteractionNodeElement
+            node={ctx.node}
+            position={position}
+            size={size}
+            type={ctx.elementType}
+            keyword={ctx.diagramType === 'SEQUENCE' ? 'sd' : 'interaction'}
+        />
+    );
 }

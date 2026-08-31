@@ -11,11 +11,14 @@ import { UmlPolylineEdgeRouter } from './package-merge-router.js';
 import { UmlManhattanBarAnchor, UmlPolylineBarAnchor } from './uml-bar-anchor.js';
 import { UmlManhattanCenterAnchor, UmlPolylineCenterAnchor } from './uml-center-anchor.js';
 import { UmlManhattanDiamondTipAnchor, UmlPolylineDiamondTipAnchor } from './uml-diamond-tip-anchor.js';
+import { UmlManhattanLifetimeAnchor, UmlPolylineLifetimeAnchor } from './uml-lifetime-anchor.js';
 
 /**
  * The anchors UML needs on top of the stock ones. GLSP registers a rectangular, an elliptic and a
  * diamond anchor per router; those put an edge anywhere on a shape's outline, which is not how UML
- * draws the two shapes that have named connection points - the branch diamond and the fork/join bar.
+ * draws the two shapes that have named connection points - the branch diamond and the fork/join bar -
+ * nor how it draws a sequence diagram's lifeline, which takes its messages on the dashed line down the
+ * middle of it rather than on the edge of the box that line is measured in.
  *
  * And the stock polyline router stands aside for one that draws the packages merged into a package as
  * branches off a single connector rather than as a line each, and spreads the transitions between one
@@ -34,6 +37,8 @@ export const umlRoutingModule = new FeatureModule(
         bindAsService(context, TYPES.IAnchorComputer, UmlManhattanDiamondTipAnchor);
         bindAsService(context, TYPES.IAnchorComputer, UmlPolylineCenterAnchor);
         bindAsService(context, TYPES.IAnchorComputer, UmlManhattanCenterAnchor);
+        bindAsService(context, TYPES.IAnchorComputer, UmlPolylineLifetimeAnchor);
+        bindAsService(context, TYPES.IAnchorComputer, UmlManhattanLifetimeAnchor);
     },
     { requires: routingModule }
 );

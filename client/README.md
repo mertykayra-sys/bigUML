@@ -79,7 +79,7 @@ Technical documentation lives in [`docs/`](./docs/README.md):
 
 - [Command Registration](./docs/guides/command-registration.md) — register VSCode commands via DI
 - [Webview Registration](./docs/guides/webview-registration.md) — webviews, messaging, and bundling
-- [GLSP Server Feature Modules](./docs/guides/glsp-server-feature-modules.md) — extend the GLSP server with feature packages
+- [GLSP Server Feature Modules](./docs/guides/glsp-server-feature-modules.md) — extend the GLSP server with feaadd missing note, text-label, terminate, and connection point element files
 - [Code Generation Pipeline](./docs/guides/property-palette-generator.md) — generation pipeline using the property palette as example
 
 ## Copilot Skills

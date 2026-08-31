@@ -23,25 +23,37 @@ export function messageLinkKey(message: Message): string {
 }
 
 /**
- * Every message running on the same link as this one, in model order and including it, so the first
- * message keeps its place as later ones are added rather than every label moving whenever one is
- * inserted.
+ * The messages this one is held alongside, in model order and including it.
+ *
+ * Read through `$containerProperty` rather than by naming the array: a message is owned by whichever
+ * property holds it, which is `Interaction.messages` for one created inside an interaction and the
+ * diagram's own relation list for one drawn on the canvas. Naming either would silently report a set of
+ * one for every message stored in the other. The container is a `CommunicationDiagram | SequenceDiagram
+ * | Interaction`, which is exactly the point - indexing it by the property that holds this message is
+ * what covers all three without naming any.
+ *
+ * A message its own container does not list comes back as a set holding just itself, so that callers
+ * placing or counting against the set always have somewhere to put it.
  */
-export function messagesOnLink(message: Message): Message[] {
-    // Read through `$containerProperty` rather than naming the array: a message is owned by whichever
-    // property holds it, which is `Interaction.messages` for one created inside an interaction and the
-    // diagram's own relation list for one drawn on the canvas. Naming either would silently report a
-    // link of one for every message stored in the other.
-    // The container is a `CommunicationDiagram | Interaction`, which is exactly the point - indexing it
-    // by the property that holds this message is what covers both without naming either.
+export function messagesInOrder(message: Message): Message[] {
     const container = message.$container as unknown as Record<string, unknown> | undefined;
     const siblings = message.$containerProperty ? container?.[message.$containerProperty] : undefined;
     if (!Array.isArray(siblings)) {
         return [message];
     }
 
+    const messages = siblings.filter((relation): relation is Message => isMessage(relation));
+    return messages.length > 0 ? messages : [message];
+}
+
+/**
+ * Every message running on the same link as this one, in model order and including it, so the first
+ * message keeps its place as later ones are added rather than every label moving whenever one is
+ * inserted.
+ */
+export function messagesOnLink(message: Message): Message[] {
     const key = messageLinkKey(message);
-    const onLink = siblings.filter((relation): relation is Message => isMessage(relation) && messageLinkKey(relation) === key);
+    const onLink = messagesInOrder(message).filter(relation => messageLinkKey(relation) === key);
     // A message its own container does not list would otherwise come back as a link with no messages
     // on it, which no caller can place or count against.
     return onLink.length > 0 ? onLink : [message];

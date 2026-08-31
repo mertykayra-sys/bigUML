@@ -7,15 +7,14 @@
  * SPDX-License-Identifier: MIT
  *********************************************************************************/
 /** @jsx svg */
+import { FRAME_TAG_CORNER_CUT } from '@borkdominik-biguml/uml-glsp-server';
 import { GCompartment, RectangularNodeView, type RenderingContext, svg } from '@eclipse-glsp/client';
 import { DefaultTypes } from '@eclipse-glsp/protocol';
 import { injectable } from 'inversify';
 import { type VNode } from 'snabbdom';
 import { type NamedElement } from '../elements/named-element/index.js';
+import { renderCompartmentSeparators } from './compartment-separator.js';
 import { hitStrokeBox } from './hit-area.js';
-
-/** How far the tag's bottom right corner is cut back - the fold that makes the shape read as a frame tag. */
-const TAG_CORNER_CUT = 12;
 
 /**
  * A frame: a shape drawn as the boundary a part of the diagram sits inside - an interaction, a state
@@ -41,6 +40,12 @@ export class FrameNodeView extends RectangularNodeView {
                     can be aimed at - this is the slack around it. */}
                 {hitStrokeBox(width, height)}
                 <rect x={0} y={0} width={width} height={height} class-uml-node-background />
+                {/* The rules dividing what the frame holds, where it holds anything divided - the dashed
+                    lines between the operands of a combined fragment. Drawn here rather than by the
+                    compartments themselves because a rule runs the whole width of the shape and a
+                    compartment is only as wide as the layouter made it; a frame whose compartments ask for
+                    no divider gets no lines, which is every other frame. */}
+                {renderCompartmentSeparators(element)}
                 {this.renderNameTag(element)}
                 {context.renderChildren(element)}
             </g>
@@ -64,7 +69,7 @@ export class FrameNodeView extends RectangularNodeView {
 
         const width = 2 * tag.bounds.x + tag.bounds.width;
         const height = 2 * tag.bounds.y + tag.bounds.height;
-        const cut = Math.min(TAG_CORNER_CUT, height / 2, width / 2);
+        const cut = Math.min(FRAME_TAG_CORNER_CUT, height / 2, width / 2);
 
         return (<path d={`M 0,0 H ${width} V ${height - cut} L ${width - cut},${height} H 0 Z`} />) as any;
     }

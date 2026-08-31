@@ -82,7 +82,9 @@ export function buildPropertyDescriptor(prop: Property, declarations: Declaratio
     }
 
     if (first?.typeName === 'boolean') {
-        return { type: 'bool', id, label: id, valueExpr: `!!context.semanticElement.${id}` };
+        // Through `toHuman` like every other kind of property. A checkbox was the one that showed its label
+        // as the property name itself, so a palette of `Name` and `Class Name` had `isAbstract` among them.
+        return { type: 'bool', id, label: toHuman(id), valueExpr: `!!context.semanticElement.${id}` };
     }
 
     if (first?.typeName === 'string' || first?.typeName === 'number') {
